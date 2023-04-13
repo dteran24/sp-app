@@ -1,4 +1,5 @@
 export interface FormData{
+    registrationID: string | null;
     parentName: string;
     studentName: string;
     studentRegisterNumber: string;
