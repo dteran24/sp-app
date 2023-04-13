@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 function SignupForm() {
   let uniqueID: string = uuidv4();
   const [validated, setValidated] = useState(false);
-  const [disableSubmit, setDisableSubmit] = useState(false);
+  
   const [formData, setFormData] = useState<FormData>({
     registrationID:'',
     parentName: '',
@@ -24,7 +24,39 @@ function SignupForm() {
     secondaryContactPerson:'',
     secondaryContactMobile: '',
   })
+  const [validateInputs, setValidateInputs] = useState({
+    parentName: false,
+    studentName: false,
+    studentRegisterNumber: false,
+    zipCode: false,
+    city: false,
+    primaryContactMobile: false,
+    secondaryContactMobile: false,
+  })
   
+  const validateUserInputs = () => {
+    let validParentName = !/^[a-zA-Z\s]+$/.test(formData.parentName);
+    let validStudentName = !/^[a-zA-Z\s]+$/.test(formData.studentName);
+    let validRegisterNumber = !/^R-[a-zA-Z0-9]{3}-\.[a-zA-Z0-9]{3}$/.test(formData.studentRegisterNumber);
+    let validZip = !/^\d{6}$/.test(formData.zipCode);
+    let validCity = !/^[a-zA-Z]+$/.test(formData.city);
+    let validMobilePrimary = !/^\d{10}$/.test(formData.primaryContactMobile);
+    let validMobileSecondary = !/^\d{10}$/.test(formData.secondaryContactMobile);
+    setValidateInputs({
+      ...validateInputs,
+      parentName: validParentName,
+      studentName: validStudentName,
+      studentRegisterNumber: validRegisterNumber,
+      zipCode: validZip,
+      city: validCity,
+      primaryContactMobile: validMobilePrimary,
+      secondaryContactMobile: validMobileSecondary
+    })
+
+
+}
+
+
   const disableDropDownHandler = () => {
     if (formData.country === '' || formData.country == null) {
       return true;
@@ -34,37 +66,41 @@ function SignupForm() {
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({...formData, [event.target.id]: event.target.value})
+    setFormData({ ...formData, [event.target.id]: event.target.value })
   }
   
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setValidated(true);
-    if (!Object.values(formData).every(property => property === null || property === '')) {
+    validateUserInputs();
+    
+    if (!Object.values(formData).every(property => property === null || property === '') && Object.values(validateInputs).every(property => property === true)) {
       setFormData({ ...formData, registrationID: uniqueID });
-      console.log('Creating form');
-    } else {
-      setDisableSubmit(true);
-    }
+      console.log("form was submitted")
+    } 
+    
   }
   
-  console.log('Form was submitted', formData);
+  
   return (
     <div className="d-flex justify-content-center">
       <Form className="w-50" noValidate validated={validated} onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="parentName">
           <Form.Label>Parent Name</Form.Label>
-          <Form.Control required type="text" value={formData.parentName} onChange={handleChange} />
+          <Form.Control required type="text" value={formData.parentName} onChange={handleChange} isInvalid={validateInputs.parentName} />
+          <Form.Control.Feedback type="invalid">Please enter a valid name</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="studentName">
           <Form.Label>Student Name</Form.Label>
-          <Form.Control required type="text" value={formData.studentName} onChange={handleChange} />
+          <Form.Control required type="text" value={formData.studentName} onChange={handleChange} isInvalid={validateInputs.studentName} />
+          <Form.Control.Feedback type="invalid">Please enter a valid name</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="studentRegisterNumber">
           <Form.Label>Student Register Number</Form.Label>
-          <Form.Control required type="text" placeholder="R-xxx.xxx" value={formData.studentRegisterNumber} onChange={handleChange} />
+          <Form.Control required type="text" placeholder="R-xxx.xxx" value={formData.studentRegisterNumber} onChange={handleChange} isInvalid={validateInputs.studentRegisterNumber} />
+          <Form.Control.Feedback type="invalid">Please enter a valid format</Form.Control.Feedback>
         </Form.Group>
         <div>
           <Form.Group className="mb-3" controlId="address">
@@ -73,10 +109,12 @@ function SignupForm() {
           </Form.Group>
           <div className="d-flex flex-row justify-content-between">
             <Form.Group className="mb-3 w-50" controlId="city">
-              <Form.Control required type="text" placeholder="City" value={formData.city} onChange={handleChange}/>
+              <Form.Control required type="text" placeholder="City" value={formData.city} onChange={handleChange} isInvalid={validateInputs.city} />
+              <Form.Control.Feedback type="invalid">Please enter a city</Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="zipCode">
-              <Form.Control required type="text" placeholder="Zip/Postal" value={formData.zipCode} onChange={handleChange} />
+              <Form.Control required type="text" placeholder="Zip/Postal" value={formData.zipCode} onChange={handleChange} isInvalid={validateInputs.zipCode} />
+              <Form.Control.Feedback type="invalid">Please enter a 6-digit zip code</Form.Control.Feedback>
             </Form.Group>
           </div>
           <div className="d-flex flex-row justify-content-between">
@@ -99,31 +137,34 @@ function SignupForm() {
 
         <Form.Group className="mb-3" controlId="emailAddress">
           <Form.Label>Email address</Form.Label>
-          <Form.Control required type="email" placeholder="example@gmail.com" />
+          <Form.Control required type="email" placeholder="example@gmail.com" value={formData.emailAddress} onChange={handleChange}/>
+          <Form.Control.Feedback type="invalid">Please enter a valid email</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="primaryContactPerson">
           <Form.Label>Primary Contact</Form.Label>
-          <Form.Control required type="text" />
+          <Form.Control required type="text" value={formData.primaryContactPerson} onChange={handleChange} />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="primaryContactMobile">
           <Form.Label>Primary Contact Mobile</Form.Label>
-          <Form.Control required type="text" placeholder="xxx-xxx-xxxx"/>
+          <Form.Control required type="text" isInvalid={validateInputs.primaryContactMobile} value={formData.primaryContactMobile} onChange={handleChange}/>
+          <Form.Control.Feedback type="invalid">Please enter a 10-digit phone number</Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="secondaryContactPerson">
           <Form.Label>Secondary Contact</Form.Label>
-          <Form.Control required type="text" />
+          <Form.Control required type="text" value={formData.secondaryContactPerson} onChange={handleChange}/>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="secondaryContactMobile">
           <Form.Label>Secondary Contact Mobile</Form.Label>
-          <Form.Control required type="text" />
+          <Form.Control required type="text" value={formData.secondaryContactMobile} isInvalid={validateInputs.secondaryContactMobile} onChange={handleChange}/>
+          <Form.Control.Feedback type="invalid">Please enter a 10-digit phone number</Form.Control.Feedback>
         </Form.Group>
         <div className="d-flex justify-content-center mb-3">
 
-        <Button variant="primary" type="submit" disabled={disableSubmit}>
+        <Button variant="primary" type="submit">
           Submit
           </Button>
           </div>
