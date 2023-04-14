@@ -4,6 +4,7 @@ import { Form, Button, } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import { v4 as uuidv4 } from "uuid";
 import states from '../data/states.json';
+import axios from 'axios';
 
 function SignupForm() {
   let uniqueID: string = uuidv4();
@@ -89,6 +90,9 @@ function SignupForm() {
     }
 
     setValidated(true);
+    axios.get('http://localhost:3001/api').then(response => {
+      console.log(response.data)
+    }).catch(error => console.log(error))
   };
 
   console.log("data", formData);
