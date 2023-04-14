@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Form, Button, } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import { v4 as uuidv4 } from "uuid";
+import states from '../data/states.json';
 
 function SignupForm() {
   let uniqueID: string = uuidv4();
@@ -10,6 +11,7 @@ function SignupForm() {
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
+    applicationStatus:"",
     registrationID: "",
     parentName: "",
     studentName: "",
@@ -35,7 +37,7 @@ function SignupForm() {
   //   secondaryContactMobile: false,
   // })
 
-  const nameValidation = "^[a-zA-Zs]+$";
+  const nameValidation = "^[a-zA-Z ]+$";
   const registerNumberValidation = "^R-[a-zA-Z0-9]{3}-.[a-zA-Z0-9]{3}$";
   const emailValidation = "^[^s@]+@[^s@]+.[^s@]+$";
   const zipValidation = "^\\d{6}$";
@@ -81,7 +83,7 @@ function SignupForm() {
     if (form.checkValidity() === false) {
       console.log("inside false");
     } else {
-      setFormData({ ...formData, registrationID: uniqueID });
+      setFormData({ ...formData, registrationID: uniqueID, applicationStatus: "Submitted" });
       setFormSubmitted(true);
       console.log("form was submitted");
     }
@@ -199,10 +201,16 @@ function SignupForm() {
                 placeholder="Country"
                 onChange={handleChange}
               >
-                <option value="">State</option>
-                <option value="cash">Cash</option>
-                <option value="online">Online</option>
-                <option value="card_machine">Card Machine</option>
+                {formData.country.toLowerCase() === "united states" ? states.states.map(state => {
+                  return (
+                    <option value={state}>{state}</option>
+                  )
+                }) : formData.country.toLowerCase() === "canada" ? states.provinces.map(province => {
+                  return (
+                    <option value={province}>{province}</option>
+                  )
+                }) :<> <option value=""> </option>
+                    <option value='notFound'>Not Found</option> </>}
               </Form.Control>
             </Form.Group>
           </div>
@@ -274,7 +282,7 @@ function SignupForm() {
         </Form.Group>
         <div className="d-flex justify-content-center mb-3">
           {formSubmitted ? (
-            <p>Form has been submitted successfully!</p>
+            <p>{`Form has been submitted succesfully! Your registration id is ${formData.registrationID}` }</p>
           ) : (
             <Button variant="primary" type="submit">
               Submit
