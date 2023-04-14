@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-escape */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Button, } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import { v4 as uuidv4 } from "uuid";
@@ -7,6 +7,7 @@ import states from '../data/states.json';
 import axios from 'axios';
 
 function SignupForm() {
+  const baseURL = 'http://localhost:3001'
   let uniqueID: string = uuidv4();
   const [validated, setValidated] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -28,15 +29,7 @@ function SignupForm() {
     secondaryContactPerson: "",
     secondaryContactMobile: "",
   });
-  // const [validateInputs, setValidateInputs] = useState({
-  //   parentName: false,
-  //   studentName: false,
-  //   studentRegisterNumber: false,
-  //   zipCode: false,
-  //   city: false,
-  //   primaryContactMobile: false,
-  //   secondaryContactMobile: false,
-  // })
+
 
   const nameValidation = "^[a-zA-Z ]+$";
   const registerNumberValidation = "^R-[a-zA-Z0-9]{3}-.[a-zA-Z0-9]{3}$";
@@ -45,25 +38,7 @@ function SignupForm() {
   const cityValidation = "^[a-zA-Z]+$";
   const mobileValidation = "^\\d{10}$";
 
-  //   const validateUserInputs = () => {
-  //     let validParentName = !/^[a-zA-Z\s]+$/.test(formData.parentName);
-  //     let validStudentName = !/^[a-zA-Z\s]+$/.test(formData.studentName);
-  //     let validRegisterNumber = !/^R-[a-zA-Z0-9]{3}-\.[a-zA-Z0-9]{3}$/.test(formData.studentRegisterNumber);
-  //     let validZip = !/^\d{6}$/.test(formData.zipCode);
-  //     let validCity = !/^[a-zA-Z]+$/.test(formData.city);
-  //     let validMobilePrimary = !/^\d{10}$/.test(formData.primaryContactMobile);
-  //     let validMobileSecondary = !/^\d{10}$/.test(formData.secondaryContactMobile);
-  //     setValidateInputs({
-  //       ...validateInputs,
-  //       parentName: validParentName,
-  //       studentName: validStudentName,
-  //       studentRegisterNumber: validRegisterNumber,
-  //       zipCode: validZip,
-  //       city: validCity,
-  //       primaryContactMobile: validMobilePrimary,
-  //       secondaryContactMobile: validMobileSecondary
-  //     })
-  // }
+
 
   const disableDropDownHandler = () => {
     if (formData.country === "" || formData.country == null) {
@@ -73,29 +48,48 @@ function SignupForm() {
     }
   };
 
+
+
+  
+
+
+  useEffect(() => {
+    if (formSubmitted) {
+        const response = axios.post(`${baseURL}/submit`, formData, {
+                headers: {
+                  "Content-Type": "application/json"
+                }
+              })
+        console.log(response.then(data => data.status))
+      } 
+
+      
+    
+    
+  },[formData])
+
+
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.id]: event.target.value });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setFormSubmitted(true)
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
     if (form.checkValidity() === false) {
+      setFormSubmitted(false);
       console.log("inside false");
     } else {
-      setFormData({ ...formData, registrationID: uniqueID, applicationStatus: "Submitted" });
-      setFormSubmitted(true);
-      console.log("form was submitted");
+      setFormSubmitted(true)
+      setFormData({...formData, registrationID: uniqueID, applicationStatus: 'Submitted'})
     }
 
     setValidated(true);
-    axios.get('http://localhost:3001/api').then(response => {
-      console.log(response.data)
-    }).catch(error => console.log(error))
   };
-
-  console.log("data", formData);
+  console.log(formData)
 
   return (
     <div className="d-flex justify-content-center">
