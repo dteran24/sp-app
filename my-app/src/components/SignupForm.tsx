@@ -1,12 +1,13 @@
 /* eslint-disable no-useless-escape */
 import { useState } from "react";
-import { Form, Button, Dropdown, DropdownButton } from "react-bootstrap";
+import { Form, Button, } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import { v4 as uuidv4 } from "uuid";
 
 function SignupForm() {
   let uniqueID: string = uuidv4();
   const [validated, setValidated] = useState(false);
+  const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
     registrationID: "",
@@ -81,6 +82,7 @@ function SignupForm() {
       console.log("inside false");
     } else {
       setFormData({ ...formData, registrationID: uniqueID });
+      setFormSubmitted(true);
       console.log("form was submitted");
     }
 
@@ -187,12 +189,12 @@ function SignupForm() {
                 onChange={handleChange}
               />
             </Form.Group>
-            
+
             <Form.Group className="mb-3" controlId="state">
               <Form.Control
                 required
                 disabled={disableDropDownHandler()}
-                as='select'
+                as="select"
                 type="select"
                 placeholder="Country"
                 onChange={handleChange}
@@ -211,7 +213,7 @@ function SignupForm() {
           <Form.Control
             required
             pattern={emailValidation}
-            type="email"
+            type="text"
             placeholder="example@gmail.com"
             value={formData.emailAddress}
             onChange={handleChange}
@@ -225,6 +227,7 @@ function SignupForm() {
           <Form.Label>Primary Contact</Form.Label>
           <Form.Control
             required
+            pattern={nameValidation}
             type="text"
             value={formData.primaryContactPerson}
             onChange={handleChange}
@@ -250,6 +253,7 @@ function SignupForm() {
           <Form.Control
             required
             type="text"
+            pattern={nameValidation}
             value={formData.secondaryContactPerson}
             onChange={handleChange}
           />
@@ -269,9 +273,13 @@ function SignupForm() {
           </Form.Control.Feedback>
         </Form.Group>
         <div className="d-flex justify-content-center mb-3">
-          <Button variant="primary" type="submit">
-            Submit
-          </Button>
+          {formSubmitted ? (
+            <p>Form has been submitted successfully!</p>
+          ) : (
+            <Button variant="primary" type="submit">
+              Submit
+            </Button>
+          )}
         </div>
       </Form>
     </div>
