@@ -48,11 +48,6 @@ function SignupForm() {
     }
   };
 
-
-
-  
-
-
   useEffect(() => {
     if (formSubmitted) {
         const response = axios.post(`${baseURL}/submit`, formData, {
