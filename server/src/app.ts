@@ -7,7 +7,8 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use('/submit', routes);
-app.use('/all', routes);
+
+app.use('/forms', routes);
+
 
 module.exports = app;

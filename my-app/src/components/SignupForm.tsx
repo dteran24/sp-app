@@ -7,7 +7,7 @@ import states from '../data/states.json';
 import axios from 'axios';
 
 function SignupForm() {
-  const baseURL = 'http://localhost:3001'
+  const baseURL = 'http://localhost:3001/forms'
   let uniqueID: string = uuidv4();
   const [validated, setValidated] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -50,7 +50,7 @@ function SignupForm() {
 
   useEffect(() => {
     if (formSubmitted) {
-        const response = axios.post(`${baseURL}/submit`, formData, {
+        const response = axios.post(`${baseURL}`, formData, {
                 headers: {
                   "Content-Type": "application/json"
                 }

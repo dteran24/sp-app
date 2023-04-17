@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FormData } from "../models/model";
+import { FormData, UpdateFormData } from "../models/model";
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(":memory:", (error: Error) => {
   if (error) {
@@ -13,59 +13,75 @@ db.run(
 );
 
 const submitForm = (req: Request, res: Response) => {
-  const {
-    applicationStatus,
-    registrationID,
-    parentName,
-    studentName,
-    studentRegisterNumber,
-    address,
-    city,
-    zipCode,
-    country,
-    state,
-    emailAddress,
-    primaryContactPerson,
-    primaryContactMobile,
-    secondaryContactPerson,
-    secondaryContactMobile,
-  } = req.body;
-
+  const form: FormData = req.body;
+  
   db.run(
     `INSERT INTO users (applicationStatus, registrationID, parentName, studentName, studentRegisterNumber, address, zipCode, city, state, country, emailAddress, primaryContactPerson, primaryContactMobile, secondaryContactPerson, secondaryContactMobile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
-      applicationStatus,
-      registrationID,
-      parentName,
-      studentName,
-      studentRegisterNumber,
-      address,
-      city,
-      zipCode,
-      country,
-      state,
-      emailAddress,
-      primaryContactPerson,
-      primaryContactMobile,
-      secondaryContactPerson,
-      secondaryContactMobile,
+      form.applicationStatus,
+      form.registrationID,
+      form.parentName,
+      form.studentName,
+      form.studentRegisterNumber,
+      form.address,
+      form.city,
+      form.zipCode,
+      form.country,
+      form.state,
+      form.emailAddress,
+      form.primaryContactPerson,
+      form.primaryContactMobile,
+      form.secondaryContactPerson,
+      form.secondaryContactMobile,
     ],
     function (err: Error) {
       if (err) {
         console.error(err.message);
         res.status(500).send('Internal Server Error');
       } else {
-          console.log(`A row has been inserted`);
-    
-        res.send("Form Submitted!");
+        res.status(201).send("Form Submitted!");
       }
     }
   );
+  
 };
 
+const getForm = (req: Request, res: Response) => {
+  const {id} = req.params;
+  let sql = `SELECT * FROM users WHERE registrationID = ?`;
+  
+  db.get(sql, [id], (err: Error, row: FormData) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).send('Internal Server Error');
+    } else if (!row) {
+      res.status(404).send('User not found');
+    } else {
+      console.log(`found user with ${id}`)
+      const user = {
+        applicationStatus: row.applicationStatus,
+        registrationID: row.registrationID,
+        parentName: row.parentName,
+        studentName: row.studentName,
+        studentRegisterNumber: row.studentRegisterNumber,
+        address: row.address,
+        city: row.city,
+        zipCode: row.zipCode,
+        country: row.country,
+        state: row.state,
+        emailAddress: row.emailAddress,
+        primaryContactPerson: row.primaryContactPerson,
+        primaryContactMobile: row.primaryContactMobile,
+        secondaryContactPerson: row.secondaryContactPerson,
+        secondaryContactMobile: row.secondaryContactMobile,
+      };
+      res.json(user);
+    }
+    
 
-
-
+  });
+  console.log("get form function");
+}
 
 const viewForms = (req: Request, res: Response) => {
   const sql = "SELECT * FROM users";
@@ -96,7 +112,47 @@ const viewForms = (req: Request, res: Response) => {
         res.json(users)
     }
   });
+  console.log('View Forms function')
 };
+
+
+
+
+const updateForm = (req: Request, res: Response) => {
+  const id = req.params.id;
+  const updatedForm: FormData = req.body; 
+  const sql = 'UPDATE users SET parentName = ?, studentName = ?, address = ?, city = ?, zipCode = ?, country = ?, state = ?, emailAddress = ?, primaryContactPerson = ?, primaryContactMobile = ?, secondaryContactPerson = ?, secondaryContactMobile = ? WHERE registrationID = ?';
+  db.run(sql,
+    [ updatedForm.parentName,
+      updatedForm.studentName,
+      updatedForm.address,
+      updatedForm.city,
+      updatedForm.zipCode,
+      updatedForm.country,
+      updatedForm.state,
+      updatedForm.emailAddress,
+      updatedForm.primaryContactPerson,
+      updatedForm.primaryContactMobile,
+      updatedForm.secondaryContactPerson,
+      updatedForm.secondaryContactMobile, id], (err: Error, row: FormData) => {
+      if (err) {
+        console.error(err.message);
+        res.status(500).send('Internal Server Error');
+      } else if (row!) {
+        res.status(404).send('User not found');
+      } else {
+        res.status(202).send('User Updated!');
+      }
+    })
+
+  
+}
+
+
+
+
+
+
 
 // db.close((err: Error) => {
 //   if (err) {
@@ -108,4 +164,6 @@ const viewForms = (req: Request, res: Response) => {
 module.exports = {
   viewForms,
   submitForm,
+  getForm,
+  updateForm
 };
