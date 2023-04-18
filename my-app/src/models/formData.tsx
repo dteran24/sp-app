@@ -7,7 +7,7 @@ export interface FormData{
     address: string;
     zipCode: string;
     city: string;
-    state: string | null;
+    state: string;
     country: string;
     emailAddress: string;
     primaryContactPerson: string;

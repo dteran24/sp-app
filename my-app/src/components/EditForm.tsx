@@ -1,36 +1,27 @@
-/* eslint-disable no-useless-escape */
 import { useEffect, useState } from "react";
-import { Form, Button, } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
-import {nameValidation, registerNumberValidation, emailValidation, zipValidation, cityValidation, mobileValidation } from "../util/validations";
-import { v4 as uuidv4 } from "uuid";
-import states from '../data/states.json';
-import axios from 'axios';
+import {
+  nameValidation,
+  registerNumberValidation,
+  emailValidation,
+  zipValidation,
+  cityValidation,
+  mobileValidation,
+} from "../util/validations";
+import states from "../data/states.json";
+import axios from "axios";
 
+interface EditFormProps {
+  queryData: FormData;
+}
 
-function SignupForm() {
-  const baseURL = 'http://localhost:3001/forms'
-  let uniqueID: string = uuidv4();
+const EditForm = ({ queryData }: EditFormProps) => {
+  const baseURL = "http://localhost:3001/forms";
   const [validated, setValidated] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const [formData, setFormData] = useState<FormData>({
-    applicationStatus:"",
-    registrationID: "",
-    parentName: "",
-    studentName: "",
-    studentRegisterNumber: "",
-    address: "",
-    city: "",
-    zipCode: "",
-    country: "",
-    state: "",
-    emailAddress: "",
-    primaryContactPerson: "",
-    primaryContactMobile: "",
-    secondaryContactPerson: "",
-    secondaryContactMobile: "",
-  });
+  const [formData, setFormData] = useState<FormData>(queryData);
 
   const disableDropDownHandler = () => {
     if (formData.country === "" || formData.country == null) {
@@ -41,42 +32,35 @@ function SignupForm() {
   };
 
   useEffect(() => {
-    if (formSubmitted) {
-        const response = axios.post(`${baseURL}`, formData, {
-                headers: {
-                  "Content-Type": "application/json"
-                }
-              })
-        console.log(response.then(data => data.status))
-      } 
-
-      
-    
-    
-  },[formData, formSubmitted])
-
-
+      if (formSubmitted) {
+        console.log("calling put method")
+      const response = axios.put(`${baseURL}/${formData.registrationID}`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      response.then((data) => console.log(data.status));
+    }
+  }, [formData, formSubmitted]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.id]: event.target.value });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setFormSubmitted(true)
+    setFormSubmitted(true);
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
     if (form.checkValidity() === false) {
       setFormSubmitted(false);
-      console.log("inside false");
     } else {
-      setFormSubmitted(true)
-      setFormData({...formData, registrationID: uniqueID, applicationStatus: 'Submitted'})
+      setFormSubmitted(true);
     }
 
     setValidated(true);
   };
-  console.log("submitted Form", formData)
+
 
   return (
     <div className="d-flex justify-content-center">
@@ -117,6 +101,7 @@ function SignupForm() {
         <Form.Group className="mb-3" controlId="studentRegisterNumber">
           <Form.Label>Student Register Number</Form.Label>
           <Form.Control
+            disabled
             required
             pattern={registerNumberValidation}
             type="text"
@@ -181,21 +166,27 @@ function SignupForm() {
               <Form.Control
                 required
                 disabled={disableDropDownHandler()}
+                defaultValue={[formData.state]}
                 as="select"
                 type="select"
                 placeholder="Country"
                 onChange={handleChange}
               >
-                {formData.country.toLowerCase() === "united states" ? states.states.map(state => {
-                  return (
-                    <option value={state}>{state}</option>
-                  )
-                }) : formData.country.toLowerCase() === "canada" ? states.provinces.map(province => {
-                  return (
-                    <option value={province}>{province}</option>
-                  )
-                }) :<> <option value=""> </option>
-                    <option value='notFound'>Not Found</option> </>}
+                {formData.country.toLowerCase() === "united states" ? (
+                  states.states.map((state) => {
+                    return <option value={state}>{state}</option>;
+                  })
+                ) : formData.country.toLowerCase() === "canada" ? (
+                  states.provinces.map((province) => {
+                    return <option value={province}>{province}</option>;
+                  })
+                ) : (
+                  <>
+                    {" "}
+                    <option value=""> </option>
+                    <option value="notFound">Not Found</option>{" "}
+                  </>
+                )}
               </Form.Control>
             </Form.Group>
           </div>
@@ -267,7 +258,7 @@ function SignupForm() {
         </Form.Group>
         <div className="d-flex justify-content-center mb-3">
           {formSubmitted ? (
-            <p>{`Form has been submitted succesfully! Your registration id is ${formData.registrationID}` }</p>
+            <p>{`Form has been submitted succesfully!`}</p>
           ) : (
             <Button variant="primary" type="submit">
               Submit
@@ -277,5 +268,5 @@ function SignupForm() {
       </Form>
     </div>
   );
-}
-export default SignupForm;
+};
+export default EditForm;

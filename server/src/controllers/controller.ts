@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { FormData, UpdateFormData } from "../models/model";
+import { FormData } from "../models/model";
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(":memory:", (error: Error) => {
   if (error) {
@@ -24,10 +24,10 @@ const submitForm = (req: Request, res: Response) => {
       form.studentName,
       form.studentRegisterNumber,
       form.address,
-      form.city,
       form.zipCode,
-      form.country,
+      form.city,
       form.state,
+      form.country,
       form.emailAddress,
       form.primaryContactPerson,
       form.primaryContactMobile,
@@ -144,8 +144,6 @@ const updateForm = (req: Request, res: Response) => {
         res.status(202).send('User Updated!');
       }
     })
-
-  
 }
 
 
