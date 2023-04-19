@@ -55,6 +55,7 @@ const getForm = (req: Request, res: Response) => {
       console.error(err.message);
       res.status(500).send('Internal Server Error');
     } else if (!row) {
+      console.log('User not found')
       res.status(404).send('User not found');
     } else {
       console.log(`found user with ${id}`)
