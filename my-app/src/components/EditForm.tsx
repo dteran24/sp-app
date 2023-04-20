@@ -8,18 +8,23 @@ import {
   zipValidation,
   cityValidation,
   mobileValidation,
+  BASE_URL,
 } from "../util/validations";
 import states from "../data/states.json";
 import axios from "axios";
+import { error } from "console";
 
 interface EditFormProps {
   queryData: FormData;
 }
 
 const EditForm = ({ queryData }: EditFormProps) => {
-  const baseURL = "http://localhost:3001/forms";
   const [validated, setValidated] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [status, setStatus] = useState({
+    complete: false,
+    message: "Form updated!",
+  });
 
   const [formData, setFormData] = useState<FormData>(queryData);
 
@@ -32,14 +37,21 @@ const EditForm = ({ queryData }: EditFormProps) => {
   };
 
   useEffect(() => {
-      if (formSubmitted) {
-        console.log("calling put method")
-      const response = axios.put(`${baseURL}/${formData.registrationID}`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      response.then((data) => console.log(data.status));
+    if (formSubmitted) {
+      console.log("calling put method");
+      axios
+        .put(`${BASE_URL}/${formData.registrationID}`, formData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => {
+          console.log(response.status)
+          setStatus({ ...status, complete:true, message:"Form Updated!" })})
+        .catch((error) => {
+          console.log(error.response.status);
+          setStatus({ ...status,complete:false, message: " Server Error" });
+        });
     }
   }, [formData, formSubmitted]);
 
@@ -60,7 +72,6 @@ const EditForm = ({ queryData }: EditFormProps) => {
 
     setValidated(true);
   };
-
 
   return (
     <div className="d-flex justify-content-center">
@@ -257,8 +268,8 @@ const EditForm = ({ queryData }: EditFormProps) => {
           </Form.Control.Feedback>
         </Form.Group>
         <div className="d-flex justify-content-center mb-3">
-          {formSubmitted ? (
-            <p>{`Form has been submitted succesfully!`}</p>
+          {status.complete ? (
+            <p>{status.message}</p>
           ) : (
             <Button variant="primary" type="submit">
               Submit

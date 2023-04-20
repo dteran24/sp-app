@@ -44,7 +44,7 @@ function SearchBar({ setQueryData } : SearchBarProps) {
             <Form.Group>
             <Form.Control className=" w-100 me-2" type="search" required value={query} placeholder="search" aria-label="search" onChange={(e)=> setQuery(e.target.value)}/>
             <Form.Control.Feedback type="invalid">
-            Please enter a valid registration number!
+            Cannot be empty!
                 </Form.Control.Feedback>
             </Form.Group>
             <Button className="ms-3 h-50" variant="outline-success" type="submit">Search</Button>

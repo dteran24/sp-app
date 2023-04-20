@@ -7,7 +7,8 @@ import FormModal from "./FormModal";
 
 function Forms() {
   const [forms, setForms] = useState<FormData[]>();
-  const [modalShow, setModalShow] = useState(false);
+    const [modalShow, setModalShow] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState<FormData>({
     applicationStatus: "",
     registrationID: "",
@@ -25,20 +26,36 @@ function Forms() {
     secondaryContactPerson: "",
     secondaryContactMobile: "",
   });
-  useEffect(() => {
-    axios
-      .get(BASE_URL)
-      .then((response) => {
-        setForms(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error.status);
-      });
-  }, []);
+    useEffect(() => {
+        axios
+            .get(BASE_URL)
+            .then((response) => {
+              setForms(response.data);
+              console.log(response.data);
+            })
+            .catch((error) => {
+              console.log(error.status);
+            });
+    },[])
+
+    useEffect(() => {
+        if (submitted) {
+            axios
+            .get(BASE_URL)
+            .then((response) => {
+              setForms(response.data);
+              console.log(response.data);
+            })
+            .catch((error) => {
+              console.log(error.status);
+            });
+        }
+        setSubmitted(false);
+   
+  }, [forms, submitted]);
   const handleModal = (data: FormData) => {
-    setForm(data);
-    setModalShow(true);
+      setForm(data);
+      setModalShow(true);
   };
   return (
     <div className="d-flex justify-content-center">
@@ -53,8 +70,8 @@ function Forms() {
               onClick={() => handleModal(form)}
             >
               <span>{`Register Number: ${form.studentRegisterNumber}`}</span>
-
               <span>{`Student: ${form.studentName}`}</span>
+              <span>{`Form Status: ${form.applicationStatus}`}</span>
             </ListGroup.Item>
           );
         })}
@@ -62,7 +79,10 @@ function Forms() {
       <FormModal
         show={modalShow}
         onHide={() => setModalShow(false)}
-        form={form}
+              form={form}
+              submitted={submitted}
+              setSubmitted={setSubmitted}
+              
       />
     </div>
   );

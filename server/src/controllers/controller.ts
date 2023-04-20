@@ -122,10 +122,13 @@ const viewForms = (req: Request, res: Response) => {
 const updateForm = (req: Request, res: Response) => {
   const id = req.params.id;
   const updatedForm: FormData = req.body; 
-  const sql = 'UPDATE users SET parentName = ?, studentName = ?, address = ?, city = ?, zipCode = ?, country = ?, state = ?, emailAddress = ?, primaryContactPerson = ?, primaryContactMobile = ?, secondaryContactPerson = ?, secondaryContactMobile = ? WHERE registrationID = ?';
+  const sql = 'UPDATE users SET applicationStatus = ?, parentName = ?, studentName = ?, studentRegisterNumber=?, address = ?, city = ?, zipCode = ?, country = ?, state = ?, emailAddress = ?, primaryContactPerson = ?, primaryContactMobile = ?, secondaryContactPerson = ?, secondaryContactMobile = ? WHERE registrationID = ?';
   db.run(sql,
-    [ updatedForm.parentName,
+    [
+      updatedForm.applicationStatus,
+      updatedForm.parentName,
       updatedForm.studentName,
+      updatedForm.studentRegisterNumber,
       updatedForm.address,
       updatedForm.city,
       updatedForm.zipCode,
@@ -144,10 +147,9 @@ const updateForm = (req: Request, res: Response) => {
       } else {
         res.status(202).send('User Updated!');
       }
-    })
+  })
+  console.log("calling edit form")
 }
-
-
 
 
 
