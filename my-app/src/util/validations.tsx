@@ -4,3 +4,4 @@ export const emailValidation = "^[^s@]+@[^s@]+.[^s@]+$";
 export const zipValidation = "^\\d{6}$";
 export const cityValidation = "^[a-zA-Z]+$";
 export const mobileValidation = "^\\d{10}$";
+export const BASE_URL = "http://localhost:3001/forms";
