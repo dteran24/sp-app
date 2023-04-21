@@ -1,18 +1,10 @@
 import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
-import {
-  nameValidation,
-  registerNumberValidation,
-  emailValidation,
-  zipValidation,
-  cityValidation,
-  mobileValidation,
-  BASE_URL,
-} from "../util/validations";
+import {NAME_VALIDATION, REGISTER_VALIDATION, EMAIL_VALIDATION, ZIP_VALIDATION, CITY_VALIDATION, MOBILE_VALIDATION, BASE_URL, generateRegistrationId } from "../util/validations";
+
 import states from "../data/states.json";
 import axios from "axios";
-import { error } from "console";
 
 interface EditFormProps {
   queryData: FormData;
@@ -25,6 +17,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
     complete: false,
     message: "Form updated!",
   });
+  
 
   const [formData, setFormData] = useState<FormData>(queryData);
 
@@ -47,12 +40,15 @@ const EditForm = ({ queryData }: EditFormProps) => {
         })
         .then((response) => {
           console.log(response.status)
-          setStatus({ ...status, complete:true, message:"Form Updated!" })})
+          setStatus({ ...status, complete: true, message: "Form Updated!" })
+        })
+        
         .catch((error) => {
           console.log(error.response.status);
           setStatus({ ...status,complete:false, message: " Server Error" });
         });
     }
+    setFormSubmitted(false);
   }, [formData, formSubmitted]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +68,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
 
     setValidated(true);
   };
-
+  console.log(formData);
   return (
     <div className="d-flex justify-content-center">
       <Form
@@ -85,7 +81,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
           <Form.Label>Parent Name</Form.Label>
           <Form.Control
             required
-            pattern={nameValidation}
+            pattern={NAME_VALIDATION}
             type="text"
             value={formData.parentName}
             onChange={handleChange}
@@ -99,7 +95,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
           <Form.Label>Student Name</Form.Label>
           <Form.Control
             required
-            pattern={nameValidation}
+            pattern={NAME_VALIDATION}
             type="text"
             value={formData.studentName}
             onChange={handleChange}
@@ -112,9 +108,8 @@ const EditForm = ({ queryData }: EditFormProps) => {
         <Form.Group className="mb-3" controlId="studentRegisterNumber">
           <Form.Label>Student Register Number</Form.Label>
           <Form.Control
-            disabled
             required
-            pattern={registerNumberValidation}
+            pattern={REGISTER_VALIDATION}
             type="text"
             placeholder="R-xxx.xxx"
             value={formData.studentRegisterNumber}
@@ -138,7 +133,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
             <Form.Group className="mb-3 w-50" controlId="city">
               <Form.Control
                 required
-                pattern={cityValidation}
+                pattern={CITY_VALIDATION}
                 type="text"
                 placeholder="City"
                 value={formData.city}
@@ -151,7 +146,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
             <Form.Group className="mb-3" controlId="zipCode">
               <Form.Control
                 required
-                pattern={zipValidation}
+                pattern={ZIP_VALIDATION}
                 type="text"
                 placeholder="Zip/Postal"
                 value={formData.zipCode}
@@ -184,12 +179,12 @@ const EditForm = ({ queryData }: EditFormProps) => {
                 onChange={handleChange}
               >
                 {formData.country.toLowerCase() === "united states" ? (
-                  states.states.map((state) => {
-                    return <option value={state}>{state}</option>;
+                  states.states.map((state, index) => {
+                    return <option key={index} value={state}>{state}</option>;
                   })
                 ) : formData.country.toLowerCase() === "canada" ? (
-                  states.provinces.map((province) => {
-                    return <option value={province}>{province}</option>;
+                  states.provinces.map((province, index) => {
+                    return <option key={index} value={province}>{province}</option>;
                   })
                 ) : (
                   <>
@@ -207,7 +202,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
           <Form.Label>Email address</Form.Label>
           <Form.Control
             required
-            pattern={emailValidation}
+            pattern={EMAIL_VALIDATION}
             type="text"
             placeholder="example@gmail.com"
             value={formData.emailAddress}
@@ -222,7 +217,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
           <Form.Label>Primary Contact</Form.Label>
           <Form.Control
             required
-            pattern={nameValidation}
+            pattern={NAME_VALIDATION}
             type="text"
             value={formData.primaryContactPerson}
             onChange={handleChange}
@@ -233,7 +228,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
           <Form.Label>Primary Contact Mobile</Form.Label>
           <Form.Control
             required
-            pattern={mobileValidation}
+            pattern={MOBILE_VALIDATION}
             type="text"
             value={formData.primaryContactMobile}
             onChange={handleChange}
@@ -248,7 +243,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
           <Form.Control
             required
             type="text"
-            pattern={nameValidation}
+            pattern={NAME_VALIDATION}
             value={formData.secondaryContactPerson}
             onChange={handleChange}
           />
@@ -258,7 +253,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
           <Form.Label>Secondary Contact Mobile</Form.Label>
           <Form.Control
             required
-            pattern={mobileValidation}
+            pattern={MOBILE_VALIDATION}
             type="text"
             value={formData.secondaryContactMobile}
             onChange={handleChange}

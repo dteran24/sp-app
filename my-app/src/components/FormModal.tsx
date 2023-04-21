@@ -64,7 +64,7 @@ function FormModal({ show, onHide, form, setSubmitted, submitted }: ModalProps) 
     >
       <Modal.Body>
         <div>
-          <h2>Student Information</h2>
+          <h2>Parent Information</h2>
           <div className="d-flex flex-row justify-content-around">
             <div className="d-flex flex-column">
               <h6 className="mb-0">Student Name</h6>

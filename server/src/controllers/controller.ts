@@ -9,19 +9,21 @@ const db = new sqlite3.Database(":memory:", (error: Error) => {
   }
 });
 db.run(
-  "create table if not exists users (applicationStatus TEXT,registrationID TEXT,parentName TEXT,studentName TEXT,studentRegisterNumber TEXT,address TEXT,zipCode TEXT,city TEXT,state TEXT,country TEXT,emailAddress TEXT,primaryContactPerson TEXT,primaryContactMobile TEXT,secondaryContactPerson TEXT, secondaryContactMobile TEXT)"
+  "create table if not exists users (applicationStatus TEXT,registrationID TEXT, registrationDate TEXT, parentName TEXT,studentName TEXT, studentAge TEXT ,studentRegisterNumber TEXT,address TEXT,zipCode TEXT,city TEXT,state TEXT,country TEXT,emailAddress TEXT,primaryContactPerson TEXT,primaryContactMobile TEXT,secondaryContactPerson TEXT, secondaryContactMobile TEXT)"
 );
 
 const submitForm = (req: Request, res: Response) => {
   const form: FormData = req.body;
   
   db.run(
-    `INSERT INTO users (applicationStatus, registrationID, parentName, studentName, studentRegisterNumber, address, zipCode, city, state, country, emailAddress, primaryContactPerson, primaryContactMobile, secondaryContactPerson, secondaryContactMobile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO users (applicationStatus, registrationID, registrationDate, parentName, studentName, studentAge, studentRegisterNumber, address, zipCode, city, state, country, emailAddress, primaryContactPerson, primaryContactMobile, secondaryContactPerson, secondaryContactMobile) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)`,
     [
       form.applicationStatus,
       form.registrationID,
+      form.registrationDate,
       form.parentName,
       form.studentName,
+      form.studentAge,
       form.studentRegisterNumber,
       form.address,
       form.zipCode,
@@ -39,7 +41,8 @@ const submitForm = (req: Request, res: Response) => {
         console.error(err.message);
         res.status(500).send('Internal Server Error');
       } else {
-        res.status(201).send("Form Submitted!");
+        res.status(200).send("Form Submitted!");
+        console.log(form.studentAge)
       }
     }
   );
@@ -58,6 +61,7 @@ const getForm = (req: Request, res: Response) => {
       console.log('User not found')
       res.status(404).send('User not found');
     } else {
+      res.status(200)
       console.log(`found user with ${id}`)
       const user = {
         applicationStatus: row.applicationStatus,
@@ -95,8 +99,10 @@ const viewForms = (req: Request, res: Response) => {
         return {
           applicationStatus: row.applicationStatus,
           registrationID: row.registrationID,
+          registrationDate: row.registrationDate,
           parentName: row.parentName,
           studentName: row.studentName,
+          studentAge: row.studentAge,
           studentRegisterNumber: row.studentRegisterNumber,
           address: row.address,
           city: row.city,

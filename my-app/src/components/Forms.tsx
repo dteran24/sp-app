@@ -5,16 +5,22 @@ import { FormData } from "../models/formData";
 import { BASE_URL } from "../util/validations";
 import FormModal from "./FormModal";
 
-function Forms() {
-  const [forms, setForms] = useState<FormData[]>();
-    const [modalShow, setModalShow] = useState(false);
-    const [submitted, setSubmitted] = useState(false);
+interface FormsProps{
+  forms: FormData[];
+  setForms: React.Dispatch<React.SetStateAction<FormData[]>>
+}
+function Forms({forms, setForms} : FormsProps) {
+  
+  const [modalShow, setModalShow] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState<FormData>({
     applicationStatus: "",
     registrationID: "",
     parentName: "",
     studentName: "",
+    studentAge: "",
     studentRegisterNumber: "",
+    registrationDate:"",
     address: "",
     city: "",
     zipCode: "",
@@ -26,17 +32,7 @@ function Forms() {
     secondaryContactPerson: "",
     secondaryContactMobile: "",
   });
-    useEffect(() => {
-        axios
-            .get(BASE_URL)
-            .then((response) => {
-              setForms(response.data);
-              console.log(response.data);
-            })
-            .catch((error) => {
-              console.log(error.status);
-            });
-    },[])
+  
 
     useEffect(() => {
         if (submitted) {

@@ -1,8 +1,10 @@
 export interface FormData{
     applicationStatus: string;
     registrationID: string | null;
+    registrationDate: string;
     parentName: string;
     studentName: string;
+    studentAge: number;
     studentRegisterNumber: string;
     address: string;
     zipCode: string;

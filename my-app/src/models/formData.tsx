@@ -3,7 +3,9 @@ export interface FormData{
     registrationID: string | null;
     parentName: string;
     studentName: string;
+    studentAge: string;
     studentRegisterNumber: string;
+    registrationDate: string;
     address: string;
     zipCode: string;
     city: string;

@@ -1,25 +1,34 @@
 /* eslint-disable no-useless-escape */
 import { useEffect, useState } from "react";
-import { Form, Button, } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
-import {nameValidation, registerNumberValidation, emailValidation, zipValidation, cityValidation, mobileValidation } from "../util/validations";
-import { v4 as uuidv4 } from "uuid";
-import states from '../data/states.json';
-import axios from 'axios';
+import {
+  NAME_VALIDATION,
+  REGISTER_VALIDATION,
+  EMAIL_VALIDATION,
+  ZIP_VALIDATION,
+  CITY_VALIDATION,
+  MOBILE_VALIDATION,
+  generateRegistrationId,
+  BASE_URL,
+  AGE_VALIDATION,
+} from "../util/validations";
+import states from "../data/states.json";
+import axios from "axios";
 
 
 function SignupForm() {
-  const baseURL = 'http://localhost:3001/forms'
-  let uniqueID: string = uuidv4();
   const [validated, setValidated] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const [formData, setFormData] = useState<FormData>({
-    applicationStatus:"",
+    applicationStatus: "",
     registrationID: "",
     parentName: "",
     studentName: "",
+    studentAge: "",
     studentRegisterNumber: "",
+    registrationDate:"",
     address: "",
     city: "",
     zipCode: "",
@@ -31,6 +40,7 @@ function SignupForm() {
     secondaryContactPerson: "",
     secondaryContactMobile: "",
   });
+  const today = new Date().toISOString().split('T')[0];
 
   const disableDropDownHandler = () => {
     if (formData.country === "" || formData.country == null) {
@@ -42,27 +52,23 @@ function SignupForm() {
 
   useEffect(() => {
     if (formSubmitted) {
-        const response = axios.post(`${baseURL}`, formData, {
-                headers: {
-                  "Content-Type": "application/json"
-                }
-              })
-        console.log(response.then(data => data.status))
-      } 
-
-      
-    
-    
-  },[formData, formSubmitted])
-
-
+      axios
+        .post(`${BASE_URL}`, formData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+        .then((response) => console.log(response.status))
+        .catch((error) => console.log(error.response.status));
+    }
+  }, [formData, formSubmitted]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.id]: event.target.value });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setFormSubmitted(true)
+    setFormSubmitted(true);
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
@@ -70,14 +76,18 @@ function SignupForm() {
       setFormSubmitted(false);
       console.log("inside false");
     } else {
-      setFormSubmitted(true)
-      setFormData({...formData, registrationID: uniqueID, applicationStatus: 'Submitted'})
+      setFormSubmitted(true);
+      setFormData({
+        ...formData,
+        registrationID: generateRegistrationId(),
+        applicationStatus: "Submitted",
+      });
     }
 
     setValidated(true);
   };
-  console.log("submitted Form", formData)
-
+  console.log("submitted Form", formData);
+ 
   return (
     <div className="d-flex justify-content-center">
       <Form
@@ -90,7 +100,7 @@ function SignupForm() {
           <Form.Label>Parent Name</Form.Label>
           <Form.Control
             required
-            pattern={nameValidation}
+            pattern={NAME_VALIDATION}
             type="text"
             value={formData.parentName}
             onChange={handleChange}
@@ -99,35 +109,65 @@ function SignupForm() {
             Please enter a valid name
           </Form.Control.Feedback>
         </Form.Group>
+        <div className="d-flex flex-row justify-content-between">
+          <Form.Group className="mb-3 w-75" controlId="studentName">
+            <Form.Label>Student Name</Form.Label>
+            <Form.Control
+              required
+              pattern={NAME_VALIDATION}
+              type="text"
+              value={formData.studentName}
+              onChange={handleChange}
+            />
+            <Form.Control.Feedback type="invalid">
+              Please enter a valid name
+            </Form.Control.Feedback>
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="studentName">
-          <Form.Label>Student Name</Form.Label>
-          <Form.Control
-            required
-            pattern={nameValidation}
-            type="text"
-            value={formData.studentName}
-            onChange={handleChange}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please enter a valid name
-          </Form.Control.Feedback>
-        </Form.Group>
-
-        <Form.Group className="mb-3" controlId="studentRegisterNumber">
-          <Form.Label>Student Register Number</Form.Label>
-          <Form.Control
-            required
-            pattern={registerNumberValidation}
-            type="text"
-            placeholder="R-xxx.xxx"
-            value={formData.studentRegisterNumber}
-            onChange={handleChange}
-          />
-          <Form.Control.Feedback type="invalid">
-            Please enter a valid format
-          </Form.Control.Feedback>
-        </Form.Group>
+          <Form.Group className="w-25 ms-3" controlId="studentAge">
+            <Form.Label>Age</Form.Label>
+            <Form.Control
+              required
+              pattern={AGE_VALIDATION}
+              type="text"
+              value={formData.studentAge}
+              onChange={handleChange}
+            />
+            <Form.Control.Feedback type="invalid">
+              Age must be 4 years or older
+            </Form.Control.Feedback>
+          </Form.Group>
+        </div>
+        <div className="d-flex flex-row justify-content-between">
+          <Form.Group className="mb-3 w-75" controlId="studentRegisterNumber">
+            <Form.Label>Student Register Number</Form.Label>
+            <Form.Control
+              required
+              pattern={REGISTER_VALIDATION}
+              type="text"
+              placeholder="R-ABC.123"
+              value={formData.studentRegisterNumber}
+              onChange={handleChange}
+            />
+            <Form.Control.Feedback type="invalid">
+              Please enter a valid format
+            </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group className="w-25 ms-3" controlId="registrationDate">
+            <Form.Label>Date</Form.Label>
+            <Form.Control
+              required
+              min={today}
+              type="date"
+              placeholder="R-ABC.123"
+              value={formData.registrationDate}
+              onChange={handleChange}
+            />
+            <Form.Control.Feedback type="invalid">
+              Please enter a valid format
+            </Form.Control.Feedback>
+          </Form.Group>
+        </div>
         <div>
           <Form.Group className="mb-3" controlId="address">
             <Form.Label>Student Address</Form.Label>
@@ -142,7 +182,7 @@ function SignupForm() {
             <Form.Group className="mb-3 w-50" controlId="city">
               <Form.Control
                 required
-                pattern={cityValidation}
+                pattern={CITY_VALIDATION}
                 type="text"
                 placeholder="City"
                 value={formData.city}
@@ -155,7 +195,7 @@ function SignupForm() {
             <Form.Group className="mb-3" controlId="zipCode">
               <Form.Control
                 required
-                pattern={zipValidation}
+                pattern={ZIP_VALIDATION}
                 type="text"
                 placeholder="Zip/Postal"
                 value={formData.zipCode}
@@ -186,16 +226,21 @@ function SignupForm() {
                 placeholder="Country"
                 onChange={handleChange}
               >
-                {formData.country.toLowerCase() === "united states" ? states.states.map(state => {
-                  return (
-                    <option value={state}>{state}</option>
-                  )
-                }) : formData.country.toLowerCase() === "canada" ? states.provinces.map(province => {
-                  return (
-                    <option value={province}>{province}</option>
-                  )
-                }) :<> <option value=""> </option>
-                    <option value='notFound'>Not Found</option> </>}
+                {formData.country.toLowerCase() === "united states" ? (
+                  states.states.map((state) => {
+                    return <option value={state}>{state}</option>;
+                  })
+                ) : formData.country.toLowerCase() === "canada" ? (
+                  states.provinces.map((province) => {
+                    return <option value={province}>{province}</option>;
+                  })
+                ) : (
+                  <>
+                    {" "}
+                    <option value=""> </option>
+                    <option value="notFound">Not Found</option>{" "}
+                  </>
+                )}
               </Form.Control>
             </Form.Group>
           </div>
@@ -205,7 +250,7 @@ function SignupForm() {
           <Form.Label>Email address</Form.Label>
           <Form.Control
             required
-            pattern={emailValidation}
+            pattern={EMAIL_VALIDATION}
             type="text"
             placeholder="example@gmail.com"
             value={formData.emailAddress}
@@ -220,7 +265,7 @@ function SignupForm() {
           <Form.Label>Primary Contact</Form.Label>
           <Form.Control
             required
-            pattern={nameValidation}
+            pattern={NAME_VALIDATION}
             type="text"
             value={formData.primaryContactPerson}
             onChange={handleChange}
@@ -231,7 +276,7 @@ function SignupForm() {
           <Form.Label>Primary Contact Mobile</Form.Label>
           <Form.Control
             required
-            pattern={mobileValidation}
+            pattern={MOBILE_VALIDATION}
             type="text"
             value={formData.primaryContactMobile}
             onChange={handleChange}
@@ -246,7 +291,7 @@ function SignupForm() {
           <Form.Control
             required
             type="text"
-            pattern={nameValidation}
+            pattern={NAME_VALIDATION}
             value={formData.secondaryContactPerson}
             onChange={handleChange}
           />
@@ -256,7 +301,7 @@ function SignupForm() {
           <Form.Label>Secondary Contact Mobile</Form.Label>
           <Form.Control
             required
-            pattern={mobileValidation}
+            pattern={MOBILE_VALIDATION}
             type="text"
             value={formData.secondaryContactMobile}
             onChange={handleChange}
@@ -267,7 +312,7 @@ function SignupForm() {
         </Form.Group>
         <div className="d-flex justify-content-center mb-3">
           {formSubmitted ? (
-            <p>{`Form has been submitted succesfully! Your registration id is ${formData.registrationID}` }</p>
+            <p>{`Form has been submitted succesfully! Your registration id is ${formData.registrationID}`}</p>
           ) : (
             <Button variant="primary" type="submit">
               Submit
