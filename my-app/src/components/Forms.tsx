@@ -1,8 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { ListGroup } from "react-bootstrap";
+import { ListGroup, Table } from "react-bootstrap";
 import { FormData } from "../models/formData";
-import { BASE_URL } from "../util/validations";
 import FormModal from "./FormModal";
 import { getAllForms } from "../services/ApiHandler";
 
@@ -49,25 +47,32 @@ function Forms({ forms, setForms }: FormsProps) {
     setForm(data);
     setModalShow(true);
   };
+
+
   return (
     <div className="d-flex justify-content-center">
-      <ListGroup className="w-50" as="ol">
-        {forms?.map((form: FormData) => {
-          return (
-            <ListGroup.Item
-              action
-              className="d-flex justify-content-between"
-              as="li"
-              key={form.registrationID}
-              onClick={() => handleModal(form)}
-            >
-              <span>{`Register Number: ${form.studentRegisterNumber}`}</span>
-              <span>{`Student: ${form.studentName}`}</span>
-              <span>{`Form Status: ${form.applicationStatus}`}</span>
-            </ListGroup.Item>
-          );
-        })}
-      </ListGroup>
+      <Table striped bordered hover className="mx-5">
+      <thead>
+        <tr>
+          <th>Registration #</th>
+          <th>Parent Name</th>
+          <th>Student Name</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+        <tbody>
+          {forms?.map((form) => {
+            return (
+              <tr style={{cursor:"pointer"}} key={form.registrationID} onClick={() => handleModal(form)}>
+                <td>{form.registrationID}</td>
+                <td>{form.parentName}</td>
+                <td>{form.studentName}</td>
+                <td>{form.applicationStatus}</td>
+              </tr>
+            )
+          })}
+      </tbody>
+    </Table>
       <FormModal
         show={modalShow}
         onHide={() => setModalShow(false)}

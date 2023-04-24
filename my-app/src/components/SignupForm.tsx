@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
@@ -239,9 +238,8 @@ function SignupForm() {
                   })
                 ) : (
                   <>
-                    {" "}
                     <option value=""> </option>
-                    <option value="notFound">Not Found</option>{" "}
+                    <option value="notFound">Not Found</option>
                   </>
                 )}
               </Form.Control>

@@ -196,9 +196,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
                   })
                 ) : (
                   <>
-                    {" "}
-                    <option value=""> </option>
-                    <option value="notFound">Not Found</option>{" "}
+                    <option value="notFound">Not Found</option>
                   </>
                 )}
               </Form.Control>

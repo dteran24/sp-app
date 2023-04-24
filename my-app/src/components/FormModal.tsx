@@ -1,7 +1,5 @@
 import { Button, Modal } from "react-bootstrap";
 import { FormData } from "../models/formData";
-import axios from "axios";
-import { BASE_URL } from "../util/validations";
 import { useEffect, useState } from "react";
 import { CheckCircle, XCircle } from "react-bootstrap-icons";
 import { editForm } from "../services/ApiHandler";

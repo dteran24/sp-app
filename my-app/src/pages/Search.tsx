@@ -27,7 +27,7 @@ function Search() {
 
   return (
     <>
-      <h1>Search Page</h1>
+      <h1 className="text-center my-4">Edit a Form</h1>
       <SearchBar setQueryData={setQueryData} />
       {Object.values(queryData).every(property => property === '') ? '' : <EditForm queryData={queryData} />}
       
