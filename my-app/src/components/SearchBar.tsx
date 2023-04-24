@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
+import { getForm } from "../services/ApiHandler";
 const baseURL = 'http://localhost:3001/forms'
 interface SearchBarProps {
     setQueryData: React.Dispatch<React.SetStateAction<FormData>> ;
@@ -21,7 +22,7 @@ function SearchBar({ setQueryData } : SearchBarProps) {
         if (form.checkValidity() === false) {
 
         } else { 
-            axios.get(`${baseURL}/${query}`).then(response => {
+            getForm(query).then(response => {
                     setError(false);
                     setQueryData(response.data)
                     setQuery('');

@@ -10,16 +10,19 @@ import {
   CITY_VALIDATION,
   MOBILE_VALIDATION,
   generateRegistrationId,
-  BASE_URL,
   AGE_VALIDATION,
 } from "../util/validations";
 import states from "../data/states.json";
-import axios from "axios";
-
+import { CheckCircle, XCircle } from "react-bootstrap-icons";
+import { submitForm } from "../services/ApiHandler";
 
 function SignupForm() {
   const [validated, setValidated] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [status, setStatus] = useState({
+    complete: false,
+    message: "Form Submitted!",
+  });
 
   const [formData, setFormData] = useState<FormData>({
     applicationStatus: "",
@@ -28,7 +31,7 @@ function SignupForm() {
     studentName: "",
     studentAge: "",
     studentRegisterNumber: "",
-    registrationDate:"",
+    registrationDate: "",
     address: "",
     city: "",
     zipCode: "",
@@ -40,7 +43,7 @@ function SignupForm() {
     secondaryContactPerson: "",
     secondaryContactMobile: "",
   });
-  const today = new Date().toISOString().split('T')[0];
+  const today = new Date().toISOString().split("T")[0];
 
   const disableDropDownHandler = () => {
     if (formData.country === "" || formData.country == null) {
@@ -52,15 +55,15 @@ function SignupForm() {
 
   useEffect(() => {
     if (formSubmitted) {
-      axios
-        .post(`${BASE_URL}`, formData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => console.log(response.status))
-        .catch((error) => console.log(error.response.status));
+      submitForm(formData)
+        .then((response) =>
+          setStatus({ ...status, complete: true, message: "Form Submitted!" })
+        )
+        .catch((error) =>
+          setStatus({ ...status, complete: true, message: "Server Error!" })
+        );
     }
+    setFormSubmitted(false);
   }, [formData, formSubmitted]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +90,7 @@ function SignupForm() {
     setValidated(true);
   };
   console.log("submitted Form", formData);
- 
+
   return (
     <div className="d-flex justify-content-center">
       <Form
@@ -311,8 +314,18 @@ function SignupForm() {
           </Form.Control.Feedback>
         </Form.Group>
         <div className="d-flex justify-content-center mb-3">
-          {formSubmitted ? (
-            <p>{`Form has been submitted succesfully! Your registration id is ${formData.registrationID}`}</p>
+          {status.complete ? (
+            status.message === "Form Submitted!" ? (
+              <div className="d-flex align-items-center">
+                <span className="fw-bold me-2 fs-4">{`${status.message} Registration ID ${formData.registrationID}`}</span>
+                <CheckCircle size={28} color="green" />
+              </div>
+            ) : (
+              <span className="fw-bold me-4 fs-4">
+                {status.message}
+                <XCircle className="ms-2" color="red" />
+              </span>
+            )
           ) : (
             <Button variant="primary" type="submit">
               Submit

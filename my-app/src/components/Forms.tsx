@@ -4,13 +4,13 @@ import { ListGroup } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import { BASE_URL } from "../util/validations";
 import FormModal from "./FormModal";
+import { getAllForms } from "../services/ApiHandler";
 
-interface FormsProps{
+interface FormsProps {
   forms: FormData[];
-  setForms: React.Dispatch<React.SetStateAction<FormData[]>>
+  setForms: React.Dispatch<React.SetStateAction<FormData[]>>;
 }
-function Forms({forms, setForms} : FormsProps) {
-  
+function Forms({ forms, setForms }: FormsProps) {
   const [modalShow, setModalShow] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState<FormData>({
@@ -20,7 +20,7 @@ function Forms({forms, setForms} : FormsProps) {
     studentName: "",
     studentAge: "",
     studentRegisterNumber: "",
-    registrationDate:"",
+    registrationDate: "",
     address: "",
     city: "",
     zipCode: "",
@@ -32,26 +32,22 @@ function Forms({forms, setForms} : FormsProps) {
     secondaryContactPerson: "",
     secondaryContactMobile: "",
   });
-  
 
-    useEffect(() => {
-        if (submitted) {
-            axios
-            .get(BASE_URL)
-            .then((response) => {
-              setForms(response.data);
-              console.log(response.data);
-            })
-            .catch((error) => {
-              console.log(error.status);
-            });
-        }
-        setSubmitted(false);
-   
+  useEffect(() => {
+    if (submitted) {
+     getAllForms()
+        .then((response) => {
+          setForms(response.data);
+        })
+        .catch((error) => {
+          console.log(error.status);
+        });
+    }
+    setSubmitted(false);
   }, [forms, submitted]);
   const handleModal = (data: FormData) => {
-      setForm(data);
-      setModalShow(true);
+    setForm(data);
+    setModalShow(true);
   };
   return (
     <div className="d-flex justify-content-center">
@@ -75,10 +71,8 @@ function Forms({forms, setForms} : FormsProps) {
       <FormModal
         show={modalShow}
         onHide={() => setModalShow(false)}
-              form={form}
-              submitted={submitted}
-              setSubmitted={setSubmitted}
-              
+        form={form}
+        setSubmitted={setSubmitted}
       />
     </div>
   );

@@ -1,10 +1,19 @@
 import { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
-import {NAME_VALIDATION, REGISTER_VALIDATION, EMAIL_VALIDATION, ZIP_VALIDATION, CITY_VALIDATION, MOBILE_VALIDATION, BASE_URL, generateRegistrationId } from "../util/validations";
-
+import {
+  NAME_VALIDATION,
+  REGISTER_VALIDATION,
+  EMAIL_VALIDATION,
+  ZIP_VALIDATION,
+  CITY_VALIDATION,
+  MOBILE_VALIDATION,
+  BASE_URL,
+} from "../util/validations";
+import { CheckCircle, XCircle } from "react-bootstrap-icons";
 import states from "../data/states.json";
 import axios from "axios";
+import { editForm } from "../services/ApiHandler";
 
 interface EditFormProps {
   queryData: FormData;
@@ -17,7 +26,6 @@ const EditForm = ({ queryData }: EditFormProps) => {
     complete: false,
     message: "Form updated!",
   });
-  
 
   const [formData, setFormData] = useState<FormData>(queryData);
 
@@ -32,20 +40,12 @@ const EditForm = ({ queryData }: EditFormProps) => {
   useEffect(() => {
     if (formSubmitted) {
       console.log("calling put method");
-      axios
-        .put(`${BASE_URL}/${formData.registrationID}`, formData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+      editForm(formData.registrationID, formData)
         .then((response) => {
-          console.log(response.status)
-          setStatus({ ...status, complete: true, message: "Form Updated!" })
+          setStatus({ ...status, complete: true, message: "Form Updated!" });
         })
-        
         .catch((error) => {
-          console.log(error.response.status);
-          setStatus({ ...status,complete:false, message: " Server Error" });
+          setStatus({ ...status, complete: false, message: " Server Error" });
         });
     }
     setFormSubmitted(false);
@@ -68,7 +68,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
 
     setValidated(true);
   };
-  console.log(formData);
+  console.log(status);
   return (
     <div className="d-flex justify-content-center">
       <Form
@@ -180,11 +180,19 @@ const EditForm = ({ queryData }: EditFormProps) => {
               >
                 {formData.country.toLowerCase() === "united states" ? (
                   states.states.map((state, index) => {
-                    return <option key={index} value={state}>{state}</option>;
+                    return (
+                      <option key={index} value={state}>
+                        {state}
+                      </option>
+                    );
                   })
                 ) : formData.country.toLowerCase() === "canada" ? (
                   states.provinces.map((province, index) => {
-                    return <option key={index} value={province}>{province}</option>;
+                    return (
+                      <option key={index} value={province}>
+                        {province}
+                      </option>
+                    );
                   })
                 ) : (
                   <>
@@ -264,7 +272,17 @@ const EditForm = ({ queryData }: EditFormProps) => {
         </Form.Group>
         <div className="d-flex justify-content-center mb-3">
           {status.complete ? (
-            <p>{status.message}</p>
+            status.message === "Form Updated!" ? (
+              <div className="d-flex align-items-center">
+                <span className="fw-bold me-2 fs-4">{status.message}</span>
+                <CheckCircle size={28} color="green" />
+              </div>
+            ) : (
+              <span className="fw-bold me-4 fs-4">
+                {status.message}
+                <XCircle className="ms-2" color="red" />
+              </span>
+            )
           ) : (
             <Button variant="primary" type="submit">
               Submit

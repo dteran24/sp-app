@@ -1,46 +1,51 @@
-import { Button, ListGroup, Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import axios from "axios";
 import { BASE_URL } from "../util/validations";
 import { useEffect, useState } from "react";
+import { CheckCircle, XCircle } from "react-bootstrap-icons";
+import { editForm } from "../services/ApiHandler";
 interface ModalProps {
-  submitted: boolean;
   setSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
   form: FormData;
   show: boolean;
   onHide: () => void;
 }
-function FormModal({ show, onHide, form, setSubmitted, submitted }: ModalProps) {
+function FormModal({ show, onHide, form, setSubmitted }: ModalProps) {
   const [userForm, setUserForm] = useState<FormData>(form);
   const [submit, setSubmit] = useState(false);
   const [status, setStatus] = useState({
     complete: false,
-    message: "Request Complete!"
-  })
-  
+    message: "Request Complete!",
+  });
+
   useEffect(() => {
     if (submit) {
-      axios
-        .put(`${BASE_URL}/${form.registrationID}`, userForm, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+      editForm(form.registrationID, userForm)
         .then((response) => {
-          console.log(response.status);
           if (response.status === 202) {
             setSubmitted(true);
-            setStatus({...status, complete: true, message: "Request Complete!"})
+            setStatus({
+              ...status,
+              complete: true,
+              message: "Request Complete!",
+            });
           }
         })
         .catch((error) => {
           setSubmitted(false);
-          setStatus({...status, complete: false, message:"Server error!"})
-          console.log(error.response.status);
+          setStatus({ ...status, complete: true, message: "Server error!" });
         });
     }
     setSubmit(false);
   }, [form.registrationID, submit, userForm]);
+
+  const handleModal = () => {
+    onHide();
+    setTimeout(() => {
+      setStatus({ ...status, complete: false });
+    }, 500);
+  };
 
   const setSubmitStatus = (event: React.MouseEvent<HTMLButtonElement>) => {
     const buttonText = event.currentTarget.textContent;
@@ -53,8 +58,8 @@ function FormModal({ show, onHide, form, setSubmitted, submitted }: ModalProps) 
     setSubmit(true);
   };
 
-  console.log(form);
-  
+  console.log(status);
+
   return (
     <Modal
       size="lg"
@@ -103,9 +108,19 @@ function FormModal({ show, onHide, form, setSubmitted, submitted }: ModalProps) 
         </div>
 
         <div className=" d-flex justify-content-between mt-3">
-          <Button onClick={onHide}>Close</Button>
+          <Button onClick={handleModal}>Close</Button>
           {status.complete ? (
-            status.message
+            status.message === "Request Complete!" ? (
+              <div className="d-flex align-items-center">
+                <span className="fw-bold me-2 fs-4">{status.message}</span>
+                <CheckCircle size={28} color="green" />
+              </div>
+            ) : (
+              <span className="fw-bold me-4 fs-4">
+                {status.message}
+                <XCircle className="ms-2" color="red" />
+              </span>
+            )
           ) : (
             <div>
               <Button
