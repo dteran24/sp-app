@@ -150,7 +150,7 @@ const updateForm = (req: Request, res: Response) => {
   const id = req.params.id;
   const updatedForm: FormData = req.body;
   const sql =
-    "UPDATE users SET applicationStatus = ?, parentName = ?, studentName = ?, studentRegisterNumber=?, address = ?, city = ?, zipCode = ?, country = ?, state = ?, emailAddress = ?, primaryContactPerson = ?, primaryContactMobile = ?, secondaryContactPerson = ?, secondaryContactMobile = ? WHERE registrationID = ?";
+    "UPDATE users SET applicationStatus = ?, registrationID = ?, parentName = ?, studentName = ?, studentRegisterNumber=?, address = ?, city = ?, zipCode = ?, country = ?, state = ?, emailAddress = ?, primaryContactPerson = ?, primaryContactMobile = ?, secondaryContactPerson = ?, secondaryContactMobile = ? WHERE registrationID = ?";
   const requiredProps: Array<keyof FormData> = [
       "parentName",
       "studentName",
@@ -176,6 +176,7 @@ const updateForm = (req: Request, res: Response) => {
     sql,
     [
       updatedForm.applicationStatus,
+      updatedForm.registrationID,
       updatedForm.parentName,
       updatedForm.studentName,
       updatedForm.studentRegisterNumber,
