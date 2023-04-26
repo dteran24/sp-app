@@ -34,7 +34,6 @@ afterEach(() => {
     cleanup()
 })
 
-
 it('renders form with input values already filled out', () => {
     expect(screen.getByLabelText('Parent Name')).toHaveAttribute('value', mockData.parentName);
     expect(screen.getByLabelText('Student Name')).toHaveAttribute('value', mockData.studentName);
