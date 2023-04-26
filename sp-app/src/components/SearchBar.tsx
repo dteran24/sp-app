@@ -11,16 +11,11 @@ function SearchBar({ setQueryData } : SearchBarProps) {
     const [validated, setValidated] = useState(false);
     const [error, setError] = useState(false);
     
-    
-    
-    
     const getData = (event: React.FormEvent<HTMLFormElement>) => {
         const form = event.currentTarget;
         event.preventDefault();
         event.stopPropagation();
-        if (form.checkValidity() === false) {
-
-        } else { 
+        if (form.checkValidity() !== false) {
             getForm(query).then(response => {
                     setError(false);
                     setQueryData(response.data)

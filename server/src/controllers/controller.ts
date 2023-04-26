@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { FormData } from "../models/model";
 const sqlite3 = require("sqlite3").verbose();
+
+//create inmemory database
 const db = new sqlite3.Database(":memory:", (error: Error) => {
   if (error) {
     console.error(error);
@@ -8,6 +10,7 @@ const db = new sqlite3.Database(":memory:", (error: Error) => {
     console.log("Connection Successful");
   }
 });
+//creating table
 db.run(
   "create table if not exists users (applicationStatus TEXT,registrationID TEXT, registrationDate TEXT, parentName TEXT,studentName TEXT, studentAge TEXT ,studentRegisterNumber TEXT,address TEXT,zipCode TEXT,city TEXT,state TEXT,country TEXT,emailAddress TEXT,primaryContactPerson TEXT,primaryContactMobile TEXT,secondaryContactPerson TEXT, secondaryContactMobile TEXT)"
 );
@@ -199,7 +202,7 @@ const updateForm = (req: Request, res: Response) => {
       } else if (row!) {
         res.status(404).send("User not found");
       } else {
-        res.status(202).send("User Updated!");
+        res.status(200).send("User Updated!");
       }
     }
   );

@@ -17,34 +17,40 @@ function FormModal({ show, onHide, form, setSubmitted }: ModalProps) {
     message: "Request Complete!",
   });
 
+  //update api once submitted
   useEffect(() => {
     if (submit) {
       editForm(form.registrationID, userForm)
         .then((response) => {
-          if (response.status === 202) {
+          if (response.status === 200) {
             setSubmitted(true);
-            setStatus({
-              ...status,
+            setStatus( s => ({
+              ...s,
               complete: true,
               message: "Request Complete!",
-            });
+            }));
           }
         })
         .catch((error) => {
-          setSubmitted(false);
-          setStatus({ ...status, complete: true, message: "Server error!" });
+          if (error.response.status === 500) {
+            setSubmitted(false);
+            setStatus(s => ({ ...s, complete: true, message: "Server error!" }));
+          }
+          
         });
     }
     setSubmit(false);
-  }, [form.registrationID, submit, userForm]);
+  }, [form.registrationID, setSubmitted, submit, userForm]);
 
+  // hide modal and pause state change 
   const handleModal = () => {
     onHide();
     setTimeout(() => {
-      setStatus({ ...status, complete: false });
+      setStatus( s => ({ ...s, complete: false }));
     }, 500);
   };
 
+  //approve or deny app based off the button
   const setSubmitStatus = (event: React.MouseEvent<HTMLButtonElement>) => {
     const buttonText = event.currentTarget.textContent;
     if (buttonText !== "Accept") {
@@ -55,8 +61,6 @@ function FormModal({ show, onHide, form, setSubmitted }: ModalProps) {
 
     setSubmit(true);
   };
-
-  console.log(status);
 
   return (
     <Modal

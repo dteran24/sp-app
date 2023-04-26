@@ -25,10 +25,11 @@ const EditForm = ({ queryData }: EditFormProps) => {
     complete: false,
     message: "Form updated!",
   });
-
   const [formData, setFormData] = useState<FormData>(queryData);
   const [registrationID] = useState(formData.registrationID)
+  const newRegistrationID = generateRegistrationId();
 
+  //disable dropdown till country is filled out
   const disableDropDownHandler = () => {
     if (formData.country === "" || formData.country == null) {
       return true;
@@ -36,27 +37,32 @@ const EditForm = ({ queryData }: EditFormProps) => {
       return false;
     }
   };
-  const newRegistrationID = generateRegistrationId();
+  
   useEffect(() => {
     if (formSubmitted) {
       console.log("calling put method");
       editForm(registrationID, formData)
         .then((response) => {
-          setStatus({ ...status, complete: true, message: "Form Updated!" });
+          if (response.status === 200) {
+            setStatus(s => ({ ...s, complete: true, message: "Form Updated!" }));
+          }
+          
         })
         .catch((error) => {
-          setStatus({ ...status, complete: false, message: " Server Error" });
+          if (error.response.status === 500) {
+            setStatus(s => ({ ...s, complete: false, message: " Server Error" }));
+          }
+          
         });
     }
     setFormSubmitted(false);
-  }, [formData, formSubmitted]);
+  }, [formData, formSubmitted, registrationID]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [event.target.id]: event.target.value });
+    setFormData(f => ({ ...f, [event.target.id]: event.target.value }));
   };
-
+  // update submit status once validated
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setFormSubmitted(true);
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();

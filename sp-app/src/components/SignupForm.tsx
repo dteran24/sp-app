@@ -43,7 +43,8 @@ function SignupForm() {
     secondaryContactMobile: "",
   });
   const today = new Date().toISOString().split("T")[0];
-
+  
+  //disable dropdown till country is filled out
   const disableDropDownHandler = () => {
     if (formData.country === "" || formData.country == null) {
       return true;
@@ -52,23 +53,31 @@ function SignupForm() {
     }
   };
 
+  //once validated calla api
   useEffect(() => {
     if (formSubmitted) {
       submitForm(formData)
-        .then((response) =>
-          setStatus({ ...status, complete: true, message: "Form Submitted!" })
+        .then((response) => {
+          if (response.status === 200) {
+            setStatus(s => ({ ...s, complete: true, message: "Form Submitted!" }))
+          }
+        }
         )
-        .catch((error) =>
-          setStatus({ ...status, complete: true, message: "Server Error!" })
+        .catch((error) => {
+          if (error.response.status === 200) {
+            setStatus(s => ({ ...s, complete: true, message: "Server Error!" }))
+          }
+        }
         );
     }
     setFormSubmitted(false);
   }, [formData, formSubmitted]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [event.target.id]: event.target.value });
+    setFormData( f => ({ ...f, [event.target.id]: event.target.value }));
   };
 
+  //set form status to call api
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     setFormSubmitted(true);
     const form = event.currentTarget;
@@ -79,17 +88,16 @@ function SignupForm() {
       console.log("inside false");
     } else {
       setFormSubmitted(true);
-      setFormData({
-        ...formData,
+      setFormData( f => ({
+        ...f,
         registrationID: generateRegistrationId(),
         applicationStatus: "Submitted",
-      });
+      }));
     }
 
     setValidated(true);
   };
-  console.log("submitted Form", formData);
-
+ 
   return (
     <div className="d-flex justify-content-center">
       <Form

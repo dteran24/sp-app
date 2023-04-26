@@ -7,8 +7,8 @@ export const MOBILE_VALIDATION = "^\\d{10}$";
 export const AGE_VALIDATION = "^([4-9]|[1-9][0-9]|[1][0-0][0-9]|110)$"
 export const BASE_URL = "http://localhost:3001/forms";
 export function generateRegistrationId() {
-    var numbers = '';
-    for (var i = 0; i < 10; i++) {
+    let numbers = '';
+    for (let i = 0; i < 10; i++) {
       numbers += Math.floor(Math.random() * 10);
     }
     return numbers;
