@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AxiosError, AxiosResponse } from "axios";
 import { Table } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import FormModal from "./FormModal";
@@ -36,15 +37,15 @@ function Forms({ forms, setForms }: FormsProps) {
   useEffect(() => {
     if (submitted) {
      getAllForms()
-       .then((response) => {
+       .then((response: AxiosResponse) => {
          if (response.status === 200) {
            setForms(response.data);
            setError(false);
           }
           
         })
-       .catch((error) => {
-         if (error.response.status === 500) {
+       .catch((error: AxiosError) => {
+         if (error.response?.status === 500) {
             setError(true)
           }
           

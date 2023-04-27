@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AxiosError, AxiosResponse } from "axios";
 import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import { getForm } from "../services/ApiHandler";
@@ -16,17 +17,16 @@ function SearchBar({ setQueryData } : SearchBarProps) {
         event.preventDefault();
         event.stopPropagation();
         if (form.checkValidity() !== false) {
-            getForm(query).then(response => {
+            getForm(query).then((response: AxiosResponse) => {
                     setError(false);
                     setQueryData(response.data)
                     setQuery('');
                     setValidated(false);
                     
-            }).catch(error => {
-                if (error.response.status === 404) {
+            }).catch((error: AxiosError) => {
+                if (error.response?.status === 404) {
                     setError(true);
                 }
-
             })
         }
         setValidated(true);

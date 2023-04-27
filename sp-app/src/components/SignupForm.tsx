@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AxiosError, AxiosResponse } from "axios";
 import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import {
@@ -57,15 +58,14 @@ function SignupForm() {
   useEffect(() => {
     if (formSubmitted) {
       submitForm(formData)
-        .then((response) => {
+        .then((response: AxiosResponse) => {
           if (response.status === 200) {
             setStatus(s => ({ ...s, complete: true, message: "Form Submitted!" }))
           }
         }
         )
-        .catch((error) => {
-          console.log(error.response)
-          if (error.response.status === 500) {
+        .catch((error: AxiosError) => {
+          if (error.response?.status === 500) {
             setStatus(s => ({ ...s, complete: true, message: "Server Error!" }))
           }
         }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AxiosError, AxiosResponse } from "axios";
 import { Form, Button } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import {
@@ -42,14 +43,14 @@ const EditForm = ({ queryData }: EditFormProps) => {
     if (formSubmitted) {
       console.log("calling put method");
       editForm(registrationID, formData)
-        .then((response) => {
+        .then((response: AxiosResponse) => {
           if (response.status === 200) {
             setStatus(s => ({ ...s, complete: true, message: "Form Updated!" }));
           }
           
         })
-        .catch((error) => {
-          if (error.response.status === 500) {
+        .catch((error: AxiosError) => {
+          if (error.response?.status === 500) {
             setStatus(s => ({ ...s, complete: false, message: " Server Error" }));
           }
           
@@ -185,7 +186,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
                 onChange={handleChange}
               >
                 {formData.country.toLowerCase() === "united states" ? (
-                  states.states.map((state, index) => {
+                  states.states.map((state: string, index: number) => {
                     return (
                       <option key={index} value={state}>
                         {state}
@@ -193,7 +194,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
                     );
                   })
                 ) : formData.country.toLowerCase() === "canada" ? (
-                  states.provinces.map((province, index) => {
+                  states.provinces.map((province: string, index: number) => {
                     return (
                       <option key={index} value={province}>
                         {province}

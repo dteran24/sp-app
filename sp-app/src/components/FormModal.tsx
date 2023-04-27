@@ -1,3 +1,4 @@
+import { AxiosError, AxiosResponse } from "axios";
 import { Button, Modal } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import { useEffect, useState } from "react";
@@ -21,7 +22,7 @@ function FormModal({ show, onHide, form, setSubmitted }: ModalProps) {
   useEffect(() => {
     if (submit) {
       editForm(form.registrationID, userForm)
-        .then((response) => {
+        .then((response: AxiosResponse) => {
           if (response.status === 200) {
             setSubmitted(true);
             setStatus( s => ({
@@ -31,8 +32,8 @@ function FormModal({ show, onHide, form, setSubmitted }: ModalProps) {
             }));
           }
         })
-        .catch((error) => {
-          if (error.response.status === 500) {
+        .catch((error: AxiosError) => {
+          if (error.response?.status === 500) {
             setSubmitted(false);
             setStatus(s => ({ ...s, complete: true, message: "Server error!" }));
           }
