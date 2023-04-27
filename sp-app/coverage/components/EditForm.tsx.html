@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.01% </span>
+                <span class="strong">82.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>247/294</span>
+                <span class='fraction'>248/300</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.01% </span>
+                <span class="strong">82.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>247/294</span>
+                <span class='fraction'>248/300</span>
             </div>
         
             
@@ -357,7 +357,13 @@
 <a name='L292'></a><a href='#L292'>292</a>
 <a name='L293'></a><a href='#L293'>293</a>
 <a name='L294'></a><a href='#L294'>294</a>
-<a name='L295'></a><a href='#L295'>295</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L295'></a><a href='#L295'>295</a>
+<a name='L296'></a><a href='#L296'>296</a>
+<a name='L297'></a><a href='#L297'>297</a>
+<a name='L298'></a><a href='#L298'>298</a>
+<a name='L299'></a><a href='#L299'>299</a>
+<a name='L300'></a><a href='#L300'>300</a>
+<a name='L301'></a><a href='#L301'>301</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -378,6 +384,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -407,6 +414,12 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -415,7 +428,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -678,10 +690,11 @@ const EditForm = ({ queryData }: EditFormProps) =&gt; {
     complete: false,
     message: "Form updated!",
   });
-&nbsp;
   const [formData, setFormData] = useState&lt;FormData&gt;(queryData);
   const [registrationID] = useState(formData.registrationID)
+  const newRegistrationID = generateRegistrationId();
 &nbsp;
+  //disable dropdown till country is filled out
   const disableDropDownHandler = () =&gt; {
     if (formData.country === "" || formData.country == null) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
 <span class="cstat-no" title="statement not covered" >      return true;</span>
@@ -689,27 +702,32 @@ const EditForm = ({ queryData }: EditFormProps) =&gt; {
       return false;
     }
   };
-  const newRegistrationID = generateRegistrationId();
+  
   useEffect(() =&gt; {
     if (formSubmitted) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
 <span class="cstat-no" title="statement not covered" >      console.log("calling put method");</span>
 <span class="cstat-no" title="statement not covered" >      editForm(registrationID, formData)</span>
 <span class="cstat-no" title="statement not covered" >        .then((response) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >          setStatus({ ...status, complete: true, message: "Form Updated!" });</span>
+<span class="cstat-no" title="statement not covered" >          if (response.status === 200) {</span>
+<span class="cstat-no" title="statement not covered" >            setStatus(s =&gt; ({ ...s, complete: true, message: "Form Updated!" }));</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
+<span class="cstat-no" title="statement not covered" >          </span>
 <span class="cstat-no" title="statement not covered" >        })</span>
 <span class="cstat-no" title="statement not covered" >        .catch((error) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >          setStatus({ ...status, complete: false, message: " Server Error" });</span>
+<span class="cstat-no" title="statement not covered" >          if (error.response.status === 500) {</span>
+<span class="cstat-no" title="statement not covered" >            setStatus(s =&gt; ({ ...s, complete: false, message: " Server Error" }));</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
+<span class="cstat-no" title="statement not covered" >          </span>
 <span class="cstat-no" title="statement not covered" >        });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
     setFormSubmitted(false);
-  }, [formData, formSubmitted]);
+  }, [formData, formSubmitted, registrationID]);
 &nbsp;
   const handleChange = <span class="fstat-no" title="function not covered" >(event: React.ChangeEvent&lt;HTMLInputElement&gt;) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    setFormData({ ...formData, [event.target.id]: event.target.value });</span>
+<span class="cstat-no" title="statement not covered" >    setFormData(f =&gt; ({ ...f, [event.target.id]: event.target.value }));</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
-&nbsp;
+  // update submit status once validated
   const handleSubmit = <span class="fstat-no" title="function not covered" >(event: React.FormEvent&lt;HTMLFormElement&gt;) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    setFormSubmitted(true);</span>
 <span class="cstat-no" title="statement not covered" >    const form = event.currentTarget;</span>
 <span class="cstat-no" title="statement not covered" >    event.preventDefault();</span>
 <span class="cstat-no" title="statement not covered" >    event.stopPropagation();</span>
@@ -952,7 +970,7 @@ export default EditForm;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-04-26T05:58:34.713Z
+                at 2023-04-27T18:49:03.912Z
             </div>
         <script src="../prettify.js"></script>
         <script>

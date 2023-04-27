@@ -70,7 +70,6 @@ const submitForm = (req: Request, res: Response) => {
           res.status(500).send("Internal Server Error");
         } else {
           res.status(200).send("Form Submitted!");
-          console.log(form.studentAge);
         }
       }
     );

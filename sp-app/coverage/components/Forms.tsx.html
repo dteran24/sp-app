@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.05% </span>
+                <span class="strong">81.05% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>74/85</span>
+                <span class='fraction'>77/95</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">60% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/4</span>
+                <span class='fraction'>3/5</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">87.05% </span>
+                <span class="strong">81.05% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>74/85</span>
+                <span class='fraction'>77/95</span>
             </div>
         
             
@@ -148,7 +148,19 @@
 <a name='L83'></a><a href='#L83'>83</a>
 <a name='L84'></a><a href='#L84'>84</a>
 <a name='L85'></a><a href='#L85'>85</a>
-<a name='L86'></a><a href='#L86'>86</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -191,12 +203,20 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -234,11 +254,11 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { useEffect, useState } from "react";
-import { ListGroup, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import { FormData } from "../models/formData";
 import FormModal from "./FormModal";
 import { getAllForms } from "../services/ApiHandler";
-&nbsp;
+import { XCircle } from "react-bootstrap-icons";
 interface FormsProps {
   forms: FormData[];
   setForms: React.Dispatch&lt;React.SetStateAction&lt;FormData[]&gt;&gt;;
@@ -246,6 +266,7 @@ interface FormsProps {
 function Forms({ forms, setForms }: FormsProps) {
   const [modalShow, setModalShow] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(false);
   const [form, setForm] = useState&lt;FormData&gt;({
     applicationStatus: "",
     registrationID: "",
@@ -266,18 +287,26 @@ function Forms({ forms, setForms }: FormsProps) {
     secondaryContactMobile: "",
   });
 &nbsp;
+  //call api when updated in modal
   useEffect(() =&gt; {
     if (submitted) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
 <span class="cstat-no" title="statement not covered" >     getAllForms()</span>
-<span class="cstat-no" title="statement not covered" >        .then((response) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >          setForms(response.data);</span>
+<span class="cstat-no" title="statement not covered" >       .then((response) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >         if (response.status === 200) {</span>
+<span class="cstat-no" title="statement not covered" >           setForms(response.data);</span>
+<span class="cstat-no" title="statement not covered" >           setError(false);</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
+<span class="cstat-no" title="statement not covered" >          </span>
 <span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >        .catch((error) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >          console.log(error.status);</span>
+<span class="cstat-no" title="statement not covered" >       .catch((error) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >         if (error.response.status === 500) {</span>
+<span class="cstat-no" title="statement not covered" >            setError(true)</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
+<span class="cstat-no" title="statement not covered" >          </span>
 <span class="cstat-no" title="statement not covered" >        });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
     setSubmitted(false);
-  }, [forms, submitted]);
+  }, [forms, setForms, submitted]);
   const handleModal = <span class="fstat-no" title="function not covered" >(data: FormData) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    setForm(data);</span>
 <span class="cstat-no" title="statement not covered" >    setModalShow(true);</span>
@@ -286,7 +315,7 @@ function Forms({ forms, setForms }: FormsProps) {
 &nbsp;
   return (
     &lt;div className="d-flex justify-content-center"&gt;
-      &lt;Table striped bordered hover className="mx-5"&gt;
+      {<span class="branch-0 cbranch-no" title="branch not covered" >error ? &lt;h2 className="fs-4"&gt;"Server error!" &lt;XCircle className="ms-2" color="red" /&gt;&lt;/h2&gt; : &lt;</span>Table striped bordered hover className="mx-5"&gt;
       &lt;thead&gt;
         &lt;tr&gt;
           &lt;th&gt;Registration #&lt;/th&gt;
@@ -302,12 +331,13 @@ function Forms({ forms, setForms }: FormsProps) {
                 &lt;td&gt;{form.registrationID}&lt;/td&gt;
                 &lt;td&gt;{form.parentName}&lt;/td&gt;
                 &lt;td&gt;{form.studentName}&lt;/td&gt;
-                &lt;td&gt;{form.applicationStatus}&lt;/td&gt;
+                &lt;td className="w-25"&gt;{form.applicationStatus}&lt;/td&gt;
               &lt;/tr&gt;
             )
           })}
       &lt;/tbody&gt;
-    &lt;/Table&gt;
+    &lt;/Table&gt;}
+      
       &lt;FormModal
         show={modalShow}
         onHide={<span class="fstat-no" title="function not covered" >() =&gt; setModalShow(false)}</span>
@@ -325,7 +355,7 @@ export default Forms;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-04-26T05:58:34.713Z
+                at 2023-04-27T18:49:03.912Z
             </div>
         <script src="../prettify.js"></script>
         <script>

@@ -64,7 +64,8 @@ function SignupForm() {
         }
         )
         .catch((error) => {
-          if (error.response.status === 200) {
+          console.log(error.response)
+          if (error.response.status === 500) {
             setStatus(s => ({ ...s, complete: true, message: "Server Error!" }))
           }
         }
@@ -79,7 +80,6 @@ function SignupForm() {
 
   //set form status to call api
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setFormSubmitted(true);
     const form = event.currentTarget;
     event.preventDefault();
     event.stopPropagation();
@@ -97,7 +97,6 @@ function SignupForm() {
 
     setValidated(true);
   };
- 
   return (
     <div className="d-flex justify-content-center">
       <Form
@@ -237,12 +236,12 @@ function SignupForm() {
                 onChange={handleChange}
               >
                 {formData.country.toLowerCase() === "united states" ? (
-                  states.states.map((state) => {
-                    return <option value={state}>{state}</option>;
+                  states.states.map((state, index) => {
+                    return <option key={index} value={state}>{state}</option>;
                   })
                 ) : formData.country.toLowerCase() === "canada" ? (
-                  states.provinces.map((province) => {
-                    return <option value={province}>{province}</option>;
+                  states.provinces.map((province, index) => {
+                    return <option key={index} value={province}>{province}</option>;
                   })
                 ) : (
                   <>

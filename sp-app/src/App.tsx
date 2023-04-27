@@ -1,24 +1,23 @@
-import React from 'react';
-import './App.css';
-import Signup from './pages/Signup';
-import Home from './pages/Home';
-import Search from './pages/Search';
-import ViewAll from './pages/ViewAll';
+import "./App.css";
+import Signup from "./pages/Signup";
+import Search from "./pages/Search";
+import ViewAll from "./pages/ViewAll";
 import { Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+
 
 function App() {
   return (
-    
-    <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="signup" element={<Signup/>} />
-        <Route path="search" element={<Search/>} />
+    <>
+     
+<Header/>
+      <Routes>
+        <Route path="/" element={<Signup />} />
+        <Route path="search" element={<Search />} />
         <Route path="viewall" element={<ViewAll />} />
-      
-    </Routes>
- 
+      </Routes>
+    </>
   );
 }
 
 export default App;
-

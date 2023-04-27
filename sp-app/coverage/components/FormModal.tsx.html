@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.63% </span>
+                <span class="strong">70.34% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>101/141</span>
+                <span class='fraction'>102/145</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.63% </span>
+                <span class="strong">70.34% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>101/141</span>
+                <span class='fraction'>102/145</span>
             </div>
         
             
@@ -204,7 +204,11 @@
 <a name='L139'></a><a href='#L139'>139</a>
 <a name='L140'></a><a href='#L140'>140</a>
 <a name='L141'></a><a href='#L141'>141</a>
-<a name='L142'></a><a href='#L142'>142</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -225,6 +229,10 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -245,6 +253,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -252,17 +261,16 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -364,34 +372,40 @@ function FormModal({ show, onHide, form, setSubmitted }: ModalProps) {
     message: "Request Complete!",
   });
 &nbsp;
+  //update api once submitted
   useEffect(() =&gt; {
     if (submit) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
 <span class="cstat-no" title="statement not covered" >      editForm(form.registrationID, userForm)</span>
 <span class="cstat-no" title="statement not covered" >        .then((response) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >          if (response.status === 202) {</span>
+<span class="cstat-no" title="statement not covered" >          if (response.status === 200) {</span>
 <span class="cstat-no" title="statement not covered" >            setSubmitted(true);</span>
-<span class="cstat-no" title="statement not covered" >            setStatus({</span>
-<span class="cstat-no" title="statement not covered" >              ...status,</span>
+<span class="cstat-no" title="statement not covered" >            setStatus( s =&gt; ({</span>
+<span class="cstat-no" title="statement not covered" >              ...s,</span>
 <span class="cstat-no" title="statement not covered" >              complete: true,</span>
 <span class="cstat-no" title="statement not covered" >              message: "Request Complete!",</span>
-<span class="cstat-no" title="statement not covered" >            });</span>
+<span class="cstat-no" title="statement not covered" >            }));</span>
 <span class="cstat-no" title="statement not covered" >          }</span>
 <span class="cstat-no" title="statement not covered" >        })</span>
 <span class="cstat-no" title="statement not covered" >        .catch((error) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >          setSubmitted(false);</span>
-<span class="cstat-no" title="statement not covered" >          setStatus({ ...status, complete: true, message: "Server error!" });</span>
+<span class="cstat-no" title="statement not covered" >          if (error.response.status === 500) {</span>
+<span class="cstat-no" title="statement not covered" >            setSubmitted(false);</span>
+<span class="cstat-no" title="statement not covered" >            setStatus(s =&gt; ({ ...s, complete: true, message: "Server error!" }));</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
+<span class="cstat-no" title="statement not covered" >          </span>
 <span class="cstat-no" title="statement not covered" >        });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
     setSubmit(false);
-  }, [form.registrationID, submit, userForm]);
+  }, [form.registrationID, setSubmitted, submit, userForm]);
 &nbsp;
+  // hide modal and pause state change 
   const handleModal = <span class="fstat-no" title="function not covered" >() =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    onHide();</span>
 <span class="cstat-no" title="statement not covered" >    setTimeout(() =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      setStatus({ ...status, complete: false });</span>
+<span class="cstat-no" title="statement not covered" >      setStatus( s =&gt; ({ ...s, complete: false }));</span>
 <span class="cstat-no" title="statement not covered" >    }, 500);</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
 &nbsp;
+  //approve or deny app based off the button
   const setSubmitStatus = <span class="fstat-no" title="function not covered" >(event: React.MouseEvent&lt;HTMLButtonElement&gt;) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    const buttonText = event.currentTarget.textContent;</span>
 <span class="cstat-no" title="statement not covered" >    if (buttonText !== "Accept") {</span>
@@ -402,8 +416,6 @@ function FormModal({ show, onHide, form, setSubmitted }: ModalProps) {
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    setSubmit(true);</span>
 <span class="cstat-no" title="statement not covered" >  };</span>
-&nbsp;
-  console.log(status);
 &nbsp;
   return (
     &lt;Modal
@@ -493,7 +505,7 @@ export default FormModal;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-04-26T05:58:34.713Z
+                at 2023-04-27T18:49:03.912Z
             </div>
         <script src="../prettify.js"></script>
         <script>
