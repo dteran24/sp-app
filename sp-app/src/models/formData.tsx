@@ -17,3 +17,7 @@ export interface FormData{
     secondaryContactPerson: string;
     secondaryContactMobile: string;
 }
+export interface Country {
+    country: string;
+    states: string[];
+  } 

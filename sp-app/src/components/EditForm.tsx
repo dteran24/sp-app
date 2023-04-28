@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import { Form, Button } from "react-bootstrap";
-import { FormData } from "../models/formData";
+import { FormData, Country } from "../models/formData";
 import {
   NAME_VALIDATION,
   REGISTER_VALIDATION,
@@ -12,7 +12,7 @@ import {
   generateRegistrationId,
 } from "../util/validations";
 import { CheckCircle, XCircle } from "react-bootstrap-icons";
-import states from "../data/states.json";
+import countries from "../data/countries.json";
 import { editForm } from "../services/ApiHandler";
 
 interface EditFormProps {
@@ -27,7 +27,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
     message: "Form updated!",
   });
   const [formData, setFormData] = useState<FormData>(queryData);
-  const [registrationID] = useState(formData.registrationID)
+  const [registrationID] = useState(formData.registrationID);
   const newRegistrationID = generateRegistrationId();
 
   //disable dropdown till country is filled out
@@ -38,29 +38,43 @@ const EditForm = ({ queryData }: EditFormProps) => {
       return false;
     }
   };
-  
+
   useEffect(() => {
     if (formSubmitted) {
       console.log("calling put method");
       editForm(registrationID, formData)
         .then((response: AxiosResponse) => {
           if (response.status === 200) {
-            setStatus(s => ({ ...s, complete: true, message: "Form Updated!" }));
+            console.log("successs")
+            setStatus((s) => ({
+              ...s,
+              complete: true,
+              message: "Form Updated!",
+            }));
           }
-          
         })
         .catch((error: AxiosError) => {
           if (error.response?.status === 500) {
-            setStatus(s => ({ ...s, complete: false, message: " Server Error" }));
+            setStatus((s) => ({
+              ...s,
+              complete: false,
+              message: " Server Error",
+            }));
           }
-          
         });
     }
     setFormSubmitted(false);
   }, [formData, formSubmitted, registrationID]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(f => ({ ...f, [event.target.id]: event.target.value }));
+    setFormData((f) => ({ ...f, [event.target.id]: event.target.value }));
+  };
+
+  const handleStateOption = (country: string) => {
+    const userInput = country.toLocaleLowerCase();
+    return countries.countries.find((country: Country) =>
+      country.country.toLocaleLowerCase().includes(userInput)
+    );
   };
   // update submit status once validated
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -70,7 +84,7 @@ const EditForm = ({ queryData }: EditFormProps) => {
     if (form.checkValidity() === false) {
       setFormSubmitted(false);
     } else {
-      setFormData({...formData, registrationID: newRegistrationID})
+      setFormData({ ...formData, registrationID: newRegistrationID });
       setFormSubmitted(true);
     }
 
@@ -166,45 +180,43 @@ const EditForm = ({ queryData }: EditFormProps) => {
           </div>
           <div className="d-flex flex-row justify-content-between">
             <Form.Group className="mb-3 w-75" controlId="country">
+              <Form.Label>Country</Form.Label>
               <Form.Control
                 required
-                type="text"
-                placeholder="Country"
-                value={formData.country}
-                onChange={handleChange}
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="state">
-              <Form.Control
-                required
-                disabled={disableDropDownHandler()}
-                defaultValue={[formData.state]}
                 as="select"
                 type="select"
                 placeholder="Country"
                 onChange={handleChange}
+                value={formData.country}
               >
-                {formData.country.toLowerCase() === "united states" ? (
-                  states.states.map((state: string, index: number) => {
+                {countries.countries.map((country: Country, index) => {
+                  return (
+                    <option key={index} value={country.country}>
+                      {country.country}
+                    </option>
+                  );
+                })}
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group className="mb-3 ps-4" controlId="state">
+              <Form.Label>State/Province</Form.Label>
+              <Form.Control
+                required
+                disabled={disableDropDownHandler()}
+                as="select"
+                type="select"
+                onChange={handleChange}
+                value={formData.state}
+              >
+                {handleStateOption(formData.country)?.states.map(
+                  (state, index) => {
                     return (
                       <option key={index} value={state}>
                         {state}
                       </option>
                     );
-                  })
-                ) : formData.country.toLowerCase() === "canada" ? (
-                  states.provinces.map((province: string, index: number) => {
-                    return (
-                      <option key={index} value={province}>
-                        {province}
-                      </option>
-                    );
-                  })
-                ) : (
-                  <>
-                    <option value="notFound">Not Found</option>
-                  </>
+                  }
                 )}
               </Form.Control>
             </Form.Group>

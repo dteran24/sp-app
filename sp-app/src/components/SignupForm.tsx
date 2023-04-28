@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AxiosError, AxiosResponse } from "axios";
 import { Form, Button } from "react-bootstrap";
-import { FormData } from "../models/formData";
+import { FormData, Country } from "../models/formData";
 import {
   NAME_VALIDATION,
   REGISTER_VALIDATION,
@@ -12,7 +12,7 @@ import {
   generateRegistrationId,
   AGE_VALIDATION,
 } from "../util/validations";
-import states from "../data/states.json";
+import countries from "../data/countries.json";
 import { CheckCircle, XCircle } from "react-bootstrap-icons";
 import { submitForm } from "../services/ApiHandler";
 
@@ -44,7 +44,7 @@ function SignupForm() {
     secondaryContactMobile: "",
   });
   const today = new Date().toISOString().split("T")[0];
-  
+
   //disable dropdown till country is filled out
   const disableDropDownHandler = () => {
     if (formData.country === "" || formData.country == null) {
@@ -60,24 +60,36 @@ function SignupForm() {
       submitForm(formData)
         .then((response: AxiosResponse) => {
           if (response.status === 200) {
-            setStatus(s => ({ ...s, complete: true, message: "Form Submitted!" }))
+            setStatus((s) => ({
+              ...s,
+              complete: true,
+              message: "Form Submitted!",
+            }));
           }
-        }
-        )
+        })
         .catch((error: AxiosError) => {
           if (error.response?.status === 500) {
-            setStatus(s => ({ ...s, complete: true, message: "Server Error!" }))
+            setStatus((s) => ({
+              ...s,
+              complete: true,
+              message: "Server Error!",
+            }));
           }
-        }
-        );
+        });
     }
     setFormSubmitted(false);
   }, [formData, formSubmitted]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData( f => ({ ...f, [event.target.id]: event.target.value }));
+    setFormData((f) => ({ ...f, [event.target.id]: event.target.value }));
   };
 
+  const handleStateOption = (country: string) => {
+    const userInput = country.toLocaleLowerCase();
+    return countries.countries.find((country: Country) =>
+      country.country.toLocaleLowerCase().includes(userInput)
+    );
+  };
   //set form status to call api
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     const form = event.currentTarget;
@@ -88,7 +100,7 @@ function SignupForm() {
       console.log("inside false");
     } else {
       setFormSubmitted(true);
-      setFormData( f => ({
+      setFormData((f) => ({
         ...f,
         registrationID: generateRegistrationId(),
         applicationStatus: "Submitted",
@@ -97,6 +109,7 @@ function SignupForm() {
 
     setValidated(true);
   };
+
   return (
     <div className="d-flex justify-content-center">
       <Form
@@ -217,37 +230,40 @@ function SignupForm() {
           </div>
           <div className="d-flex flex-row justify-content-between">
             <Form.Group className="mb-3 w-75" controlId="country">
+              <Form.Label>Country</Form.Label>
               <Form.Control
                 required
-                type="text"
+                as="select"
                 placeholder="Country"
-                value={formData.country}
                 onChange={handleChange}
-              />
+              >
+                {countries.countries.map((country: Country, index) => {
+                  return (
+                    <option key={index} value={country.country}>
+                      {country.country}
+                    </option>
+                  );
+                })}
+              </Form.Control>
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="state">
+            <Form.Group className="mb-3 ps-4" controlId="state">
+            <Form.Label>State/Province</Form.Label>
               <Form.Control
                 required
                 disabled={disableDropDownHandler()}
                 as="select"
                 type="select"
-                placeholder="Country"
                 onChange={handleChange}
               >
-                {formData.country.toLowerCase() === "united states" ? (
-                  states.states.map((state, index) => {
-                    return <option key={index} value={state}>{state}</option>;
-                  })
-                ) : formData.country.toLowerCase() === "canada" ? (
-                  states.provinces.map((province, index) => {
-                    return <option key={index} value={province}>{province}</option>;
-                  })
-                ) : (
-                  <>
-                    <option value=""> </option>
-                    <option value="notFound">Not Found</option>
-                  </>
+                {handleStateOption(formData.country)?.states.map(
+                  (state, index) => {
+                    return (
+                      <option key={index} value={state}>
+                        {state}
+                      </option>
+                    );
+                  }
                 )}
               </Form.Control>
             </Form.Group>
