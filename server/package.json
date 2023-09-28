@@ -2,9 +2,9 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node server/index.js",
+    "start": "ts-node src/index.ts",
     "start:dev": "nodemon server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
