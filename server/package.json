@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "npx tsc && ts-node src/index.ts",
     "start:dev": "nodemon server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
